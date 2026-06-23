@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job & Internship Matches – CVMatch</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    .jobs-layout { display: grid; grid-template-columns: 280px 1fr 340px; min-height: 100vh; }
+    .jobs-sidebar { background: var(--bg-surface); border-right: 1px solid var(--border-subtle); padding: 24px 16px; overflow-y: auto; }
+    .jobs-main { padding: 24px; overflow-y: auto; background: var(--bg-base); }
+    .jobs-detail { background: var(--bg-surface); border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 24px; }
+    .filter-section { margin-bottom: 24px; }
+    .filter-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+    .filter-option { display: flex; align-items: center; gap: 8px; padding: 7px 0; cursor: pointer; }
+    .filter-option input[type=checkbox] { accent-color: var(--primary); width: 14px; height: 14px; }
+    .filter-option label { font-size: 0.85rem; color: var(--text-secondary); cursor: pointer; flex: 1; }
+    .filter-option span { font-size: 0.72rem; color: var(--text-muted); }
+    .filter-range { width: 100%; accent-color: var(--primary); }
+    .source-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: var(--radius-full);
+      font-size: 0.68rem; font-weight: 600; border: 1px solid;
+    }
+    .source-linkedin { background: rgba(10,102,194,0.1); color: #4A9EFF; border-color: rgba(10,102,194,0.2); }
+    .source-internshala { background: rgba(0,162,255,0.1); color: #66C8FF; border-color: rgba(0,162,255,0.2); }
+    .source-naukri { background: rgba(255,120,0,0.1); color: #FF9944; border-color: rgba(255,120,0,0.2); }
+    .source-indeed { background: rgba(0,113,240,0.12); color: #6699FF; border-color: rgba(0,113,240,0.2); }
+    .source-wellfound { background: rgba(255,90,90,0.1); color: #FF8888; border-color: rgba(255,90,90,0.2); }
+    .source-glassdoor { background: rgba(0,195,100,0.1); color: #55DD88; border-color: rgba(0,195,100,0.2); }
+    .job-list-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg); padding: 18px;
+      margin-bottom: 12px; cursor: pointer;
+      transition: all var(--transition-base);
+      position: relative; overflow: hidden;
+    }
+    .job-list-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: linear-gradient(180deg, var(--primary), var(--accent));
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform var(--transition-base);
+    }
+    .job-list-card:hover, .job-list-card.selected {
+      border-color: var(--border-accent); transform: translateX(3px);
+    }
+    .job-list-card:hover::before, .job-list-card.selected::before { transform: scaleY(1); }
+    .job-list-card.selected { background: var(--bg-card-hover); border-color: var(--primary); }
+    .chance-bar { height: 4px; background: var(--bg-elevated); border-radius: var(--radius-full); margin-top: 10px; overflow: hidden; }
+    .chance-fill { height: 100%; border-radius: var(--radius-full); transition: width 1s ease; }
+    .job-detail-section { margin-bottom: 24px; }
+    .job-detail-section-title { font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
+    .requirement-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary); }
+    .salary-badge { background: rgba(0,217,192,0.1); border: 1px solid rgba(0,217,192,0.2); border-radius: var(--radius-md); padding: 12px 16px; text-align: center; }
+    .similar-job-mini { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-elevated); border-radius: var(--radius-md); margin-bottom: 8px; cursor: pointer; transition: var(--transition-fast); }
+    .similar-job-mini:hover { background: var(--bg-card); }
+    .empty-detail { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 40px; }
+    .tabs { margin-bottom: 20px; }
+    .topbar-jobs { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+    .view-toggle { display: flex; gap: 4px; }
+    .view-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); background: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: var(--transition-fast); }
+    .view-btn.active { background: var(--primary-glow); border-color: var(--border-accent); color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="jobs-layout">
+
+    <!-- LEFT: Filters -->
+    <div class="jobs-sidebar">
+      <a href="../index.html" style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:20px;">← Back to CVMatch</a>
+      <div style="font-family:var(--font-display);font-weight:700;font-size:1.1rem;margin-bottom:20px;">🔍 Filters</div>
+
+      <!-- Type Filter -->
+      <div class="filter-section">
+        <div class="filter-title">Job Type</div>
+        <div class="filter-option"><input type="checkbox" id="ft-full" checked><label for="ft-full">Full-time</label><span>183</span></div>
+        <div class="filter-option"><input type="checkbox" id="ft-intern" checked><label for="ft-intern">Internship</label><span>64</span></div>
+        <div class="filter-option"><input type="checkbox" id="ft-contract"><label for="ft-contract">Contract</label><span>28</span></div>
+        <div class="filter-option"><input type="checkbox" id="ft-freelance"><label for="ft-freelance">Freelance</label><span>12</span></div>
+      </div>
+
+      <!-- Match Score -->
+      <div class="filter-section">
+        <div class="filter-title">Minimum Match Score</div>
+        <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-muted);margin-bottom:6px;">
+          <span>Any</span><span id="matchRangeVal" style="color:var(--primary);font-weight:600;">70%</span>
+        </div>
+        <input type="range" class="filter-range" min="0" max="100" value="70" id="matchRange" oninput="document.getElementById('matchRangeVal').textContent=this.value+'%';filterJobs()">
+      </div>
+
+      <!-- Source -->
+      <div class="filter-section">
+        <div class="filter-title">Job Source</div>
+        <div class="filter-option"><input type="checkbox" id="src-linkedin" checked><label for="src-linkedin">LinkedIn</label><span>89</span></div>
+        <div class="filter-option"><input type="checkbox" id="src-internshala" checked><label for="src-internshala">Internshala</label><span>42</span></div>
+        <div class="filter-option"><input type="checkbox" id="src-naukri" checked><label for="src-naukri">Naukri</label><span>61</span></div>
+        <div class="filter-option"><input type="checkbox" id="src-indeed" checked><label for="src-indeed">Indeed</label><span>33</span></div>
+        <div class="filter-option"><input type="checkbox" id="src-wellfound" checked><label for="src-wellfound">Wellfound</label><span>22</span></div>
+      </div>
+
+      <!-- Experience -->
+      <div class="filter-section">
+        <div class="filter-title">Experience Level</div>
+        <div class="filter-option"><input type="checkbox" id="exp-0" checked><label for="exp-0">Fresher / 0-1 yr</label><span>97</span></div>
+        <div class="filter-option"><input type="checkbox" id="exp-1" checked><label for="exp-1">1-3 years</label><span>88</span></div>
+        <div class="filter-option"><input type="checkbox" id="exp-3"><label for="exp-3">3-5 years</label><span>44</span></div>
+        <div class="filter-option"><input type="checkbox" id="exp-5"><label for="exp-5">5+ years</label><span>18</span></div>
+      </div>
+
+      <!-- Location -->
+      <div class="filter-section">
+        <div class="filter-title">Location</div>
+        <div class="filter-option"><input type="checkbox" id="loc-remote" checked><label for="loc-remote">Remote</label><span>112</span></div>
+        <div class="filter-option"><input type="checkbox" id="loc-bangalore" checked><label for="loc-bangalore">Bangalore</label><span>74</span></div>
+        <div class="filter-option"><input type="checkbox" id="loc-mumbai"><label for="loc-mumbai">Mumbai</label><span>48</span></div>
+        <div class="filter-option"><input type="checkbox" id="loc-delhi"><label for="loc-delhi">Delhi NCR</label><span>41</span></div>
+        <div class="filter-option"><input type="checkbox" id="loc-pune"><label for="loc-pune">Pune</label><span>36</span></div>
+        <div class="filter-option"><input type="checkbox" id="loc-hyderabad"><label for="loc-hyderabad">Hyderabad</label><span>29</span></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="filterJobs()">Apply Filters</button>
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px;" onclick="resetFilters()">Reset All</button>
+    </div>
+
+    <!-- CENTER: Job List -->
+    <div class="jobs-main">
+      <div class="topbar-jobs">
+        <div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:1.3rem;">Job Matches</div>
+          <div style="color:var(--text-muted);font-size:0.82rem;" id="jobCount">247 jobs matched to your profile</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="tabs" style="margin:0;">
+            <div style="display:flex;gap:4px;background:var(--bg-surface);padding:4px;border-radius:var(--radius-full);">
+              <button class="tab-btn active" onclick="switchTab(this,'all')">All</button>
+              <button class="tab-btn" onclick="switchTab(this,'jobs')">Jobs</button>
+              <button class="tab-btn" onclick="switchTab(this,'internships')">Internships</button>
+              <button class="tab-btn" onclick="switchTab(this,'saved')">Saved</button>
+            </div>
+          </div>
+          <select style="background:var(--bg-card);border:1px solid var(--border-soft);color:var(--text-primary);padding:8px 12px;border-radius:var(--radius-md);font-size:0.82rem;outline:none;" onchange="sortJobs(this.value)">
+            <option value="match">Best Match</option>
+            <option value="recent">Most Recent</option>
+            <option value="salary">Highest Salary</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="search-bar" style="margin-bottom:16px;">
+        <span style="color:var(--text-muted);">🔍</span>
+        <input type="text" placeholder="Search jobs, companies, skills..." oninput="searchJobs(this.value)">
+        <button class="btn btn-primary btn-sm">Search</button>
+      </div>
+
+      <!-- Job Cards -->
+      <div id="jobList"></div>
+    </div>
+
+    <!-- RIGHT: Job Detail -->
+    <div class="jobs-detail" id="jobDetail">
+      <div class="empty-detail">
+        <div style="font-size:3rem;opacity:0.2;margin-bottom:16px;">💼</div>
+        <div style="font-family:var(--font-display);font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Select a Job</div>
+        <div style="color:var(--text-muted);font-size:0.82rem;">Click any job card to see details, skills match, and apply.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const JOBS = [
+      { id:1, title:'Software Engineer', company:'Google', logo:'G', color:'#4285F4', location:'Bangalore / Remote', type:'Full-time', source:'linkedin', match:94, salary:'₹18-25 LPA', exp:'0-2 years', posted:'2h ago', skills:['Python','Java','Algorithms','System Design','SQL'], missing:['Kubernetes','Go'], desc:'Join Google as a Software Engineer working on core search infrastructure. You will design, build, and scale systems that serve billions of queries per day. This role requires strong fundamentals in data structures, algorithms, and distributed systems.', requirements:['B.Tech/M.Tech in CS or related','Strong DSA skills','Experience with distributed systems','Good communication skills'], tags:['Hot','Top Company'], saved:false },
+      { id:2, title:'Data Analyst Intern', company:'Razorpay', logo:'R', color:'#2EB5C6', location:'Bangalore (Hybrid)', type:'Internship', source:'internshala', match:91, salary:'₹25,000/month', exp:'Fresher', posted:'4h ago', skills:['Python','SQL','Excel','Data Visualization','Statistics'], missing:['Power BI'], desc:'Work with Razorpay\'s data team to analyze payment trends, build dashboards, and generate insights that drive product decisions. Ideal for final-year students.', requirements:['3rd/4th year B.Tech student','Strong SQL and Python','Good analytical thinking','Available for 3-6 months'], tags:['Stipend','Certificate'], saved:false },
+      { id:3, title:'ML Engineer', company:'Flipkart', logo:'F', color:'#F7941E', location:'Bangalore', type:'Full-time', source:'naukri', match:88, salary:'₹15-20 LPA', exp:'0-2 years', posted:'1d ago', skills:['Python','TensorFlow','ML','Pandas','AWS'], missing:['Spark','Scala'], desc:'Build and deploy machine learning models that power Flipkart\'s recommendation engine, search ranking, and fraud detection systems at massive scale.', requirements:['Strong ML fundamentals','Experience with TensorFlow/PyTorch','Cloud experience (AWS/GCP)','Deployed at least one ML model to production'], tags:['Immediate Joining'], saved:false },
+      { id:4, title:'Frontend Developer Intern', company:'CRED', logo:'C', color:'#7C5CFC', location:'Remote', type:'Internship', source:'wellfound', match:85, salary:'₹20,000/month', exp:'Fresher', posted:'6h ago', skills:['React.js','JavaScript','CSS','HTML','Git'], missing:['TypeScript','Next.js'], desc:'Join CRED\'s product team to build beautiful, performant web experiences for India\'s premium credit card users. Work directly with senior engineers and designers.', requirements:['Experience with React.js','Strong JavaScript fundamentals','Eye for design and attention to detail','Portfolio of projects'], tags:['PPO Opportunity','Stipend'], saved:true },
+      { id:5, title:'Data Science Engineer', company:'Swiggy', logo:'S', color:'#FC8019', location:'Bangalore (On-site)', type:'Full-time', source:'linkedin', match:83, salary:'₹12-18 LPA', exp:'1-2 years', posted:'2d ago', skills:['Python','ML','SQL','Data Analysis','APIs'], missing:['Spark','Docker'], desc:'Work on Swiggy\'s demand forecasting, route optimization, and ETA prediction systems. Collaborate with operations, product, and engineering teams to solve real-world logistics problems.', requirements:['Strong Python and ML skills','Experience with large datasets','Good understanding of statistics','Prior internship or project experience'], tags:['Growth Stage'], saved:false },
+      { id:6, title:'Python Backend Developer', company:'Zerodha', logo:'Z', color:'#387ED1', location:'Bangalore', type:'Full-time', source:'naukri', match:80, salary:'₹10-15 LPA', exp:'0-1 years', posted:'3d ago', skills:['Python','FastAPI','PostgreSQL','REST APIs','Git'], missing:['Redis','Docker','AWS'], desc:'Build high-performance trading APIs and backend services at Zerodha, India\'s largest stockbroker. Focus on reliability, low latency, and scalability.', requirements:['Strong Python skills','Experience with FastAPI or Flask','Understanding of financial systems is a plus','Good problem-solving skills'], tags:['ESOP','Stable Company'], saved:false },
+      { id:7, title:'AI/ML Research Intern', company:'Microsoft India', logo:'M', color:'#00A4EF', location:'Hyderabad (Hybrid)', type:'Internship', source:'linkedin', match:78, salary:'₹60,000/month', exp:'Fresher / PhD', posted:'1d ago', skills:['Python','ML','Deep Learning','Research Paper Reading','PyTorch'], missing:['NLP','Transformers','CUDA'], desc:'Join Microsoft Research India to work on cutting-edge AI research projects. Publish papers, work with world-class researchers, and shape the future of AI.', requirements:['Final year B.Tech or pursuing Masters/PhD','Strong ML and math background','Evidence of research interest (projects, papers, Kaggle)'], tags:['High Stipend','Research','PPO'], saved:false },
+      { id:8, title:'Full Stack Developer', company:'Josh Technology', logo:'J', color:'#E84545', location:'Gurgaon / Remote', type:'Full-time', source:'indeed', match:75, salary:'₹8-12 LPA', exp:'0-2 years', posted:'5d ago', skills:['React.js','Node.js','MongoDB','REST APIs','JavaScript'], missing:['TypeScript','Docker','AWS'], desc:'Build end-to-end web applications for Josh Technology\'s enterprise clients. Own features from design to deployment, and work in an agile environment.', requirements:['Proficient in React and Node.js','Understanding of databases','Experience building REST APIs','Team player with good communication'], tags:['Work from Home'], saved:false },
+    ];
+
+    let selectedJob = null;
+    let currentTab = 'all';
+
+    function renderJobs(jobs) {
+      const list = document.getElementById('jobList');
+      list.innerHTML = '';
+      if (!jobs.length) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><div style="font-size:1rem;color:var(--text-secondary);">No jobs match your filters</div><div style="font-size:0.85rem;color:var(--text-muted);">Try adjusting your filters or search terms</div></div>`;
+        return;
+      }
+      jobs.forEach(job => {
+        const card = document.createElement('div');
+        card.className = `job-list-card${selectedJob?.id === job.id ? ' selected' : ''}`;
+        card.dataset.id = job.id;
+
+        const matchClass = job.match >= 85 ? 'match-high' : job.match >= 70 ? 'match-medium' : 'match-low';
+        const matchColor = job.match >= 85 ? 'var(--success)' : job.match >= 70 ? 'var(--gold-soft)' : 'var(--danger)';
+        const chanceColor = `linear-gradient(90deg, ${job.match >= 85 ? 'var(--success)' : job.match >= 70 ? 'var(--gold-soft)' : 'var(--danger)'}, ${job.match >= 85 ? '#20A744' : job.match >= 70 ? '#E8A800' : 'var(--danger)'})`;
+
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+            <div style="display:flex;gap:10px;align-items:flex-start;flex:1;">
+              <div style="width:42px;height:42px;border-radius:var(--radius-md);background:${job.color}22;border:1px solid ${job.color}44;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:${job.color};flex-shrink:0;">${job.logo}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+                  <span style="font-weight:600;font-size:0.92rem;">${job.title}</span>
+                  ${job.saved ? '<span style="color:var(--gold-soft);font-size:0.85rem;">★</span>' : ''}
+                </div>
+                <div style="color:var(--text-secondary);font-size:0.8rem;">${job.company} · ${job.location}</div>
+              </div>
+            </div>
+            <div class="match-score-pill ${matchClass}">${job.match}% match</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <span class="source-badge source-${job.source}">${job.source === 'linkedin' ? '💼 LinkedIn' : job.source === 'internshala' ? '🎓 Internshala' : job.source === 'naukri' ? '🚀 Naukri' : job.source === 'wellfound' ? '⚡ Wellfound' : '🔍 Indeed'}</span>
+            <span class="badge ${job.type === 'Internship' ? 'badge-accent' : 'badge-primary'}" style="font-size:0.68rem;">${job.type}</span>
+            ${job.tags.map(t => `<span class="badge badge-gold" style="font-size:0.65rem;">${t}</span>`).join('')}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:var(--text-secondary);font-size:0.78rem;">${job.salary} · ${job.exp} · ${job.posted}</div>
+          </div>
+          <div class="chance-bar">
+            <div class="chance-fill" style="width:${job.match}%;background:${chanceColor};"></div>
+          </div>`;
+
+        card.onclick = () => showJobDetail(job);
+        list.appendChild(card);
+      });
+    }
+
+    function showJobDetail(job) {
+      selectedJob = job;
+      document.querySelectorAll('.job-list-card').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.id) === job.id));
+
+      const matched = job.skills.filter(s => !job.missing.includes(s));
+      const matchClass = job.match >= 85 ? 'match-high' : job.match >= 70 ? 'match-medium' : 'match-low';
+
+      document.getElementById('jobDetail').innerHTML = `
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;">
+            <div style="width:52px;height:52px;border-radius:var(--radius-lg);background:${job.color}22;border:1px solid ${job.color}44;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.4rem;color:${job.color};flex-shrink:0;">${job.logo}</div>
+            <div style="flex:1;">
+              <h2 style="font-family:var(--font-display);font-size:1.2rem;font-weight:700;margin-bottom:2px;">${job.title}</h2>
+              <div style="color:var(--text-secondary);font-size:0.85rem;">${job.company} · ${job.location}</div>
+            </div>
+            <button onclick="toggleSave(${job.id})" style="background:none;border:1px solid var(--border-soft);border-radius:var(--radius-md);padding:8px;cursor:pointer;color:${job.saved ? 'var(--gold-soft)' : 'var(--text-muted)'};transition:var(--transition-fast);" id="saveBtn">${job.saved ? '★ Saved' : '☆ Save'}</button>
+          </div>
+
+          <!-- Match Score Big -->
+          <div style="background:var(--bg-elevated);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:0.82rem;color:var(--text-secondary);">Your Match Score</span>
+              <span class="match-score-pill ${matchClass}" style="font-size:0.9rem;padding:6px 14px;">${job.match}%</span>
+            </div>
+            <div class="progress-bar" style="height:8px;">
+              <div class="progress-fill" style="width:${job.match}%;"></div>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">
+              ${job.match >= 85 ? '🟢 Excellent match — you qualify for this role' : job.match >= 70 ? '🟡 Good match — apply with a tailored resume' : '🔴 Partial match — upskill before applying'}
+            </div>
+          </div>
+
+          <!-- Key Info -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div class="salary-badge">
+              <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">Salary / Stipend</div>
+              <div style="font-family:var(--font-display);font-weight:700;color:var(--primary);font-size:1rem;">${job.salary}</div>
+            </div>
+            <div style="background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:12px 16px;text-align:center;">
+              <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">Experience</div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:0.95rem;">${job.exp}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="job-detail-section">
+          <div class="job-detail-section-title">📋 About the Role</div>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;">${job.desc}</p>
+        </div>
+
+        <!-- Requirements -->
+        <div class="job-detail-section">
+          <div class="job-detail-section-title">📝 Requirements</div>
+          ${job.requirements.map(r => `<div class="requirement-item"><span style="color:var(--primary);">→</span>${r}</div>`).join('')}
+        </div>
+
+        <!-- Skills Match -->
+        <div class="job-detail-section">
+          <div class="job-detail-section-title">🎯 Skills Analysis</div>
+          <div style="margin-bottom:12px;">
+            <div style="font-size:0.75rem;color:var(--success);font-weight:600;margin-bottom:6px;">✓ You Have (${matched.length})</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${matched.map(s => `<span class="skill-tag matched">✓ ${s}</span>`).join('')}</div>
+          </div>
+          ${job.missing.length ? `<div>
+            <div style="font-size:0.75rem;color:var(--danger);font-weight:600;margin-bottom:6px;">✗ You Need (${job.missing.length})</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">${job.missing.map(s => `<span class="skill-tag missing">✗ ${s}</span>`).join('')}</div>
+          </div>` : ''}
+        </div>
+
+        <!-- Apply CTA -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+          <a href="#" class="btn btn-primary" style="justify-content:center;padding:14px;" onclick="applyJob(${job.id})">
+            🚀 Apply Now — ${job.source === 'linkedin' ? 'LinkedIn' : job.source === 'internshala' ? 'Internshala' : job.source}
+          </a>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <a href="chatbot.html" class="btn btn-secondary" style="justify-content:center;font-size:0.82rem;">🤖 Get AI Advice</a>
+            <a href="analyzer.html" class="btn btn-secondary" style="justify-content:center;font-size:0.82rem;">📊 Tailor Resume</a>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="job-detail-section">
+          <div class="job-detail-section-title">🏷️ Tags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">${job.tags.map(t => `<span class="badge badge-gold">${t}</span>`).join('')}
+            <span class="badge badge-primary">${job.type}</span>
+          </div>
+        </div>`;
+    }
+
+    function switchTab(btn, tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTab = tab;
+      filterJobs();
+    }
+
+    function filterJobs() {
+      const minMatch = parseInt(document.getElementById('matchRange').value);
+      let filtered = JOBS.filter(j => j.match >= minMatch);
+      if (currentTab === 'jobs') filtered = filtered.filter(j => j.type === 'Full-time');
+      if (currentTab === 'internships') filtered = filtered.filter(j => j.type === 'Internship');
+      if (currentTab === 'saved') filtered = filtered.filter(j => j.saved);
+      document.getElementById('jobCount').textContent = `${filtered.length} jobs matched to your profile`;
+      renderJobs(filtered);
+    }
+
+    function searchJobs(q) {
+      const lower = q.toLowerCase();
+      const filtered = JOBS.filter(j =>
+        j.title.toLowerCase().includes(lower) ||
+        j.company.toLowerCase().includes(lower) ||
+        j.skills.some(s => s.toLowerCase().includes(lower))
+      );
+      document.getElementById('jobCount').textContent = `${filtered.length} results for "${q}"`;
+      renderJobs(filtered);
+    }
+
+    function sortJobs(by) {
+      const sorted = [...JOBS].sort((a, b) => {
+        if (by === 'match') return b.match - a.match;
+        if (by === 'salary') {
+          const getNum = s => parseInt(s.replace(/[^0-9]/g, '')) || 0;
+          return getNum(b.salary) - getNum(a.salary);
+        }
+        return 0;
+      });
+      renderJobs(sorted);
+    }
+
+    function toggleSave(id) {
+      const job = JOBS.find(j => j.id === id);
+      if (job) { job.saved = !job.saved; showJobDetail(job); filterJobs(); }
+    }
+
+    function applyJob(id) {
+      const job = JOBS.find(j => j.id === id);
+      alert(`Opening ${job.company} application on ${job.source}...\n\n(In the full version, this would open the actual job posting)`);
+    }
+
+    function resetFilters() {
+      document.querySelectorAll('.filter-option input[type=checkbox]').forEach(cb => cb.checked = true);
+      document.getElementById('matchRange').value = 0;
+      document.getElementById('matchRangeVal').textContent = '0%';
+      filterJobs();
+    }
+
+    // Initial render
+    renderJobs(JOBS);
+  </script>
+</body>
+</html>

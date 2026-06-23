@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In – CVMatch</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .auth-bg {
+      position: fixed; inset: 0; z-index: -1;
+      background: var(--bg-base);
+    }
+    .auth-orb-1 { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(0,217,192,0.08) 0%, transparent 70%); top: -200px; left: -100px; }
+    .auth-orb-2 { position: fixed; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(124,92,252,0.08) 0%, transparent 70%); bottom: -150px; right: -100px; }
+    .auth-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(0,217,192,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,217,192,0.03) 1px, transparent 1px); background-size: 60px 60px; }
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-xl);
+      padding: 40px 44px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .auth-header { text-align: center; margin-bottom: 32px; }
+    .auth-logo { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+    .auth-logo span { color: var(--primary); }
+    .auth-tagline { color: var(--text-muted); font-size: 0.88rem; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-input {
+      width: 100%; padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      color: var(--text-primary); font-size: 0.9rem;
+      outline: none; transition: var(--transition-base);
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .form-input::placeholder { color: var(--text-muted); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+    .divider span { font-size: 0.78rem; color: var(--text-muted); }
+    .social-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 11px;
+      background: var(--bg-elevated); border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md); color: var(--text-primary);
+      font-size: 0.88rem; font-weight: 500; cursor: pointer;
+      transition: var(--transition-fast); margin-bottom: 10px;
+    }
+    .social-btn:hover { border-color: var(--border-accent); background: var(--primary-glow); }
+    .auth-switch { text-align: center; margin-top: 24px; font-size: 0.85rem; color: var(--text-muted); }
+    .auth-switch a { color: var(--primary); font-weight: 600; }
+    .auth-tabs { display: flex; gap: 0; background: var(--bg-elevated); border-radius: var(--radius-md); padding: 4px; margin-bottom: 24px; }
+    .auth-tab { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: none; background: none; color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: var(--transition-fast); }
+    .auth-tab.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+    .password-wrapper { position: relative; }
+    .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem; }
+    .strength-bar { height: 3px; background: var(--bg-elevated); border-radius: var(--radius-full); margin-top: 6px; overflow: hidden; }
+    .strength-fill { height: 100%; border-radius: var(--radius-full); transition: all 0.3s ease; }
+  </style>
+</head>
+<body>
+  <div class="auth-bg">
+    <div class="auth-orb-1"></div>
+    <div class="auth-orb-2"></div>
+    <div class="auth-grid"></div>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-logo">🎯 CV<span>Match</span></div>
+      <div class="auth-tagline">Your AI-powered career platform</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('signin')">Sign In</button>
+      <button class="auth-tab" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <!-- Social Logins -->
+    <div class="social-btn" onclick="socialLogin('Google')">
+      <span style="font-size:1rem;">🌐</span> Continue with Google
+    </div>
+    <div class="social-btn" onclick="socialLogin('GitHub')">
+      <span style="font-size:1rem;">⚡</span> Continue with GitHub
+    </div>
+    <div class="social-btn" onclick="socialLogin('LinkedIn')">
+      <span style="font-size:1rem;">💼</span> Continue with LinkedIn
+    </div>
+
+    <div class="divider"><span>or use email</span></div>
+
+    <!-- Sign In Form -->
+    <div id="signinForm">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="priya@example.com">
+      </div>
+      <div class="form-group">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <label class="form-label" style="margin:0;">Password</label>
+          <a href="#" style="font-size:0.78rem;color:var(--primary);">Forgot password?</a>
+        </div>
+        <div class="password-wrapper">
+          <input type="password" class="form-input" id="signinPass" placeholder="Enter your password">
+          <button class="password-toggle" onclick="togglePass('signinPass')">👁</button>
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--text-secondary);margin-bottom:20px;cursor:pointer;">
+        <input type="checkbox" style="accent-color:var(--primary);"> Remember me for 30 days
+      </label>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:0.95rem;" onclick="handleAuth('signin')">
+        Sign In →
+      </button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div id="signupForm" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" placeholder="Priya">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" placeholder="Sharma">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" placeholder="priya@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">I am a...</label>
+        <select class="form-input" style="cursor:pointer;">
+          <option value="">Select your role</option>
+          <option>B.Tech Student (1st / 2nd Year)</option>
+          <option>B.Tech Student (3rd / 4th Year — Placements)</option>
+          <option>Fresher (0-1 year experience)</option>
+          <option>Working Professional (1-3 years)</option>
+          <option>Senior Professional (3+ years)</option>
+          <option>MBA Student</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="password-wrapper">
+          <input type="password" class="form-input" id="signupPass" placeholder="Create a strong password" oninput="checkStrength(this.value)">
+          <button class="password-toggle" onclick="togglePass('signupPass')">👁</button>
+        </div>
+        <div class="strength-bar">
+          <div class="strength-fill" id="strengthFill" style="width:0%;background:var(--danger);"></div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;" id="strengthLabel">Enter a password</div>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.8rem;color:var(--text-secondary);margin-bottom:20px;cursor:pointer;line-height:1.5;">
+        <input type="checkbox" style="accent-color:var(--primary);margin-top:2px;"> I agree to the <a href="#" style="color:var(--primary);">Terms of Service</a> and <a href="#" style="color:var(--primary);">Privacy Policy</a>
+      </label>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:0.95rem;" onclick="handleAuth('signup')">
+        Create Free Account →
+      </button>
+    </div>
+
+    <div class="auth-switch" id="authSwitch">
+      Don't have an account? <a href="#" onclick="switchTab('signup')">Sign up free</a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    function switchTab(tab) {
+      const tabs = document.querySelectorAll('.auth-tab');
+      const signin = document.getElementById('signinForm');
+      const signup = document.getElementById('signupForm');
+      const switchEl = document.getElementById('authSwitch');
+
+      if (tab === 'signin') {
+        tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+        signin.style.display = 'block'; signup.style.display = 'none';
+        switchEl.innerHTML = "Don't have an account? <a href='#' onclick='switchTab(\"signup\")'>Sign up free</a>";
+      } else {
+        tabs[1].classList.add('active'); tabs[0].classList.remove('active');
+        signin.style.display = 'none'; signup.style.display = 'block';
+        switchEl.innerHTML = "Already have an account? <a href='#' onclick='switchTab(\"signin\")'>Sign in</a>";
+      }
+    }
+
+    function togglePass(id) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function checkStrength(val) {
+      const fill = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      let score = 0;
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const configs = [
+        { pct: '0%', color: 'var(--danger)', text: 'Enter a password' },
+        { pct: '25%', color: 'var(--danger)', text: 'Weak' },
+        { pct: '50%', color: 'var(--warning)', text: 'Fair' },
+        { pct: '75%', color: 'var(--gold-soft)', text: 'Good' },
+        { pct: '100%', color: 'var(--success)', text: 'Strong ✓' },
+      ];
+      fill.style.width = configs[score].pct;
+      fill.style.background = configs[score].color;
+      label.textContent = configs[score].text;
+      label.style.color = configs[score].color;
+    }
+
+    function handleAuth(type) {
+      showToast(type === 'signin' ? '✓ Signing you in...' : '🎉 Creating your account...', 'success');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+    }
+
+    function socialLogin(provider) {
+      showToast(`Connecting with ${provider}...`, 'info');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+    }
+
+    function showToast(msg, type) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerHTML = `<span>${type === 'success' ? '✓' : 'ℹ'}</span><span>${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+  </script>
+</body>
+</html>

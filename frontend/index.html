@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVMatch – Match Your Resume With The Right Opportunity</title>
+  <meta name="description" content="AI-powered resume analysis, ATS scoring, and intelligent job matching platform. Get instant feedback and find your perfect career match.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    /* Landing-page specific styles */
+    .floating-card {
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-lg);
+      animation: floatCard 4s ease-in-out infinite;
+      z-index: 2;
+    }
+    .floating-card-1 {
+      top: 20%;
+      right: 8%;
+      animation-delay: 0s;
+    }
+    .floating-card-2 {
+      top: 55%;
+      right: 4%;
+      animation-delay: -2s;
+    }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0) rotate(-1deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+    .ats-demo-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .how-it-works-step {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary-glow);
+      border: 1px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+      font-size: 1.1rem;
+    }
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 40px 32px;
+      transition: all var(--transition-base);
+    }
+    .pricing-card.featured {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(0,217,192,0.05), rgba(124,92,252,0.05));
+      position: relative;
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: var(--bg-base);
+      padding: 4px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pricing-price {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .pricing-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 8px; display: inline-block; }
+    .pricing-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .pricing-list li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+    .pricing-list .check { color: var(--success); }
+    .pricing-list .cross { color: var(--text-muted); }
+    .testimonial-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+    }
+    .testimonial-stars { color: var(--gold-soft); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 12px; }
+    .testimonial-text { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.9rem;
+    }
+    .author-name { font-weight: 600; font-size: 0.875rem; }
+    .author-role { font-size: 0.78rem; color: var(--text-muted); }
+    .brand-strip {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      padding: 40px 0;
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      overflow: hidden;
+    }
+    .brand-item {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-item:hover { color: var(--text-secondary); }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+    .cta-section {
+      background: linear-gradient(135deg, rgba(0,217,192,0.08), rgba(124,92,252,0.08));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 80px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300D9C0' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">🎯</div>
+        CV<span>Match</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="pages/jobs.html">Jobs</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="pages/login.html" class="btn btn-ghost">Sign In</a>
+        <a href="pages/dashboard.html" class="btn btn-primary">Get Started Free →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-grid-lines"></div>
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+    </div>
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span>✦</span> AI-Powered Career Platform
+        </div>
+        <h1 class="hero-title">
+          Match Your Resume With The
+          <span class="text-gradient"> Right Opportunity</span>
+        </h1>
+        <p class="hero-subtitle">
+          Upload your resume and let our AI analyze your skills, score your ATS compatibility, match you with top jobs, and give personalized improvement suggestions — all in seconds.
+        </p>
+        <div class="hero-actions">
+          <a href="pages/analyzer.html" class="btn btn-primary btn-lg">
+            🚀 Analyze My Resume
+          </a>
+          <a href="#how-it-works" class="btn btn-secondary btn-lg">
+            Watch Demo ▶
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Resumes Analyzed</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-number">92%</div>
+            <div class="stat-label">ATS Pass Rate</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-number">2.3x</div>
+            <div class="stat-label">More Interviews</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual - Floating Cards -->
+      <div style="position:relative;height:520px;display:flex;align-items:center;justify-content:center;">
+        <!-- Central Upload Card -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius-xl);padding:32px;width:280px;text-align:center;box-shadow:var(--shadow-lg);z-index:3;position:relative;">
+          <div class="upload-icon" style="margin:0 auto 16px;">📄</div>
+          <div style="font-family:var(--font-display);font-weight:700;margin-bottom:4px;">Resume Analyzed</div>
+          <div style="color:var(--text-muted);font-size:0.8rem;margin-bottom:20px;">Priya_Sharma_Resume.pdf</div>
+          <!-- ATS Ring -->
+          <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="100" height="100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg-elevated)" stroke-width="8"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="url(#scoreGrad)" stroke-width="8"
+                stroke-dasharray="264" stroke-dashoffset="46" stroke-linecap="round"
+                transform="rotate(-90 50 50)"/>
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00D9C0"/>
+                  <stop offset="100%" stop-color="#7C5CFC"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div style="position:absolute;font-family:var(--font-display);font-weight:800;font-size:1.5rem;color:var(--primary);">82</div>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">ATS Score</div>
+        </div>
+
+        <!-- Floating Card 1: Match Score -->
+        <div style="position:absolute;top:10%;right:-5%;background:var(--bg-card);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:14px 18px;box-shadow:var(--shadow-glow);animation:floatCard 3.5s ease-in-out infinite;z-index:4;">
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">Job Match</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:var(--font-display);font-size:1.4rem;font-weight:700;color:var(--success);">87%</span>
+            <span style="font-size:0.75rem;color:var(--text-secondary);">Software Engineer</span>
+          </div>
+          <div style="font-size:0.7rem;color:var(--success);margin-top:4px;">✓ 12 skills matched</div>
+        </div>
+
+        <!-- Floating Card 2: Skills -->
+        <div style="position:absolute;bottom:18%;left:-8%;background:var(--bg-card);border:1px solid var(--border-purple);border-radius:var(--radius-lg);padding:14px 18px;box-shadow:var(--shadow-glow-purple);animation:floatCard 4.2s ease-in-out infinite -1.5s;z-index:4;">
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:8px;">Detected Skills</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;">
+            <span class="badge badge-primary" style="font-size:0.65rem;">Python</span>
+            <span class="badge badge-primary" style="font-size:0.65rem;">React</span>
+            <span class="badge badge-accent" style="font-size:0.65rem;">ML</span>
+            <span class="badge badge-primary" style="font-size:0.65rem;">SQL</span>
+          </div>
+        </div>
+
+        <!-- Floating Card 3: Improvement -->
+        <div style="position:absolute;top:60%;right:-3%;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:14px 18px;animation:floatCard 5s ease-in-out infinite -3s;z-index:4;max-width:200px;">
+          <div style="font-size:0.7rem;color:var(--warning);margin-bottom:4px;">💡 AI Suggestion</div>
+          <div style="font-size:0.75rem;color:var(--text-secondary);line-height:1.5;">Add Power BI to boost match by <strong style="color:var(--primary);">+15%</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Strip -->
+  <div class="container">
+    <div class="brand-strip">
+      <span style="font-size:0.75rem;color:var(--text-muted);font-weight:500;white-space:nowrap;">Finds jobs from</span>
+      <div class="brand-item">💼 LinkedIn</div>
+      <div class="brand-item">🎓 Internshala</div>
+      <div class="brand-item">🔍 Indeed</div>
+      <div class="brand-item">🚀 Naukri</div>
+      <div class="brand-item">⚡ Wellfound</div>
+      <div class="brand-item">🏢 Glassdoor</div>
+      <div class="brand-item" style="color:var(--primary);">+ 50 more →</div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <section class="section" id="features">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:56px;">
+        <span class="section-eyebrow">Everything You Need</span>
+        <h2 class="section-title">Supercharge Your Job Search with AI</h2>
+        <p class="section-subtitle" style="margin:0 auto;">From resume analysis to mock interviews — CVMatch handles every step of your career journey with cutting-edge AI.</p>
+      </div>
+      <div class="features-grid">
+        <a href="pages/analyzer.html" class="feature-card card-glow" style="text-decoration:none;">
+          <div class="feature-icon" style="background:rgba(0,217,192,0.12);border:1px solid rgba(0,217,192,0.2);">📊</div>
+          <h3 class="feature-title">ATS Score Analysis</h3>
+          <p class="feature-desc">Get a detailed ATS compatibility score with keyword analysis, formatting checks, and actionable improvements to get past automated filters.</p>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--primary);font-weight:600;">Learn more →</div>
+        </a>
+        <a href="pages/jobs.html" class="feature-card card-glow" style="text-decoration:none;">
+          <div class="feature-icon" style="background:rgba(124,92,252,0.12);border:1px solid rgba(124,92,252,0.2);">🎯</div>
+          <h3 class="feature-title">Smart Job Matching</h3>
+          <p class="feature-desc">Our embedding-based AI compares your resume against thousands of job descriptions and shows your exact match percentage with skill gap analysis.</p>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--accent-light);font-weight:600;">Browse Jobs →</div>
+        </a>
+        <a href="pages/chatbot.html" class="feature-card card-glow" style="text-decoration:none;">
+          <div class="feature-icon" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);">🤖</div>
+          <h3 class="feature-title">AI Career Assistant</h3>
+          <p class="feature-desc">Chat with your personal AI career coach powered by Claude. Get resume advice, interview prep, skill roadmaps, and project ideas — 24/7.</p>
+          <div style="margin-top:16px;display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--gold-soft);font-weight:600;">Chat Now →</div>
+        </a>
+        <div class="feature-card card-glow">
+          <div class="feature-icon" style="background:rgba(48,209,88,0.1);border:1px solid rgba(48,209,88,0.2);">✍️</div>
+          <h3 class="feature-title">AI Resume Rewriter</h3>
+          <p class="feature-desc">Paste a job description and let our AI rewrite your bullet points to perfectly align with what the hiring manager is looking for — with measurable impact.</p>
+        </div>
+        <div class="feature-card card-glow">
+          <div class="feature-icon" style="background:rgba(255,159,10,0.1);border:1px solid rgba(255,159,10,0.2);">🏆</div>
+          <h3 class="feature-title">Internship Engine</h3>
+          <p class="feature-desc">Students get personalized internship recommendations from Internshala, LinkedIn, and more — matched to your skills, projects, and career goals.</p>
+        </div>
+        <div class="feature-card card-glow">
+          <div class="feature-icon" style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);">🎙️</div>
+          <h3 class="feature-title">AI Mock Interviews</h3>
+          <p class="feature-desc">Practice with AI-powered mock interviews. Get scored on confidence, technical depth, and communication. Prepare for any role in any company.</p>
+          <div style="margin-top:12px;"><span class="badge badge-warning">Coming Soon</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" id="how-it-works" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;">
+        <div>
+          <span class="section-eyebrow">Simple Process</span>
+          <h2 class="section-title">From Upload to Dream Job in 4 Steps</h2>
+          <div style="display:flex;flex-direction:column;gap:28px;margin-top:36px;">
+            <div class="how-it-works-step">
+              <div class="step-number">1</div>
+              <div>
+                <h4 style="font-family:var(--font-display);font-weight:600;margin-bottom:6px;">Upload Your Resume</h4>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Upload your PDF or DOCX resume. Our parser extracts your skills, experience, education, and projects.</p>
+              </div>
+            </div>
+            <div class="how-it-works-step">
+              <div class="step-number">2</div>
+              <div>
+                <h4 style="font-family:var(--font-display);font-weight:600;margin-bottom:6px;">Get Your ATS Score</h4>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Receive a detailed score with keyword analysis, formatting review, and a prioritized improvement checklist.</p>
+              </div>
+            </div>
+            <div class="how-it-works-step">
+              <div class="step-number">3</div>
+              <div>
+                <h4 style="font-family:var(--font-display);font-weight:600;margin-bottom:6px;">Match with Opportunities</h4>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">See your exact match percentage for any job. Paste a job description or browse real listings from 50+ platforms.</p>
+              </div>
+            </div>
+            <div class="how-it-works-step">
+              <div class="step-number">4</div>
+              <div>
+                <h4 style="font-family:var(--font-display);font-weight:600;margin-bottom:6px;">Apply with Confidence</h4>
+                <p style="color:var(--text-secondary);font-size:0.9rem;">Use AI-optimized resumes, generated cover letters, and interview prep to land your dream job.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Demo ATS Card -->
+        <div style="background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius-xl);padding:32px;box-shadow:var(--shadow-lg);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+            <div>
+              <div style="font-family:var(--font-display);font-weight:700;font-size:1.2rem;">ATS Report</div>
+              <div style="color:var(--text-muted);font-size:0.8rem;">Priya_Sharma_Resume.pdf</div>
+            </div>
+            <div class="badge badge-success">Good</div>
+          </div>
+          <!-- Score Ring Demo -->
+          <div style="text-align:center;margin-bottom:24px;">
+            <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;">
+              <svg width="120" height="120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--bg-elevated)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="url(#scoreGrad2)" stroke-width="10"
+                  stroke-dasharray="314" stroke-dashoffset="57" stroke-linecap="round"
+                  transform="rotate(-90 60 60)" style="transition:all 1.5s ease;"/>
+                <defs>
+                  <linearGradient id="scoreGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00D9C0"/>
+                    <stop offset="100%" stop-color="#7C5CFC"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div style="position:absolute;text-align:center;">
+                <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--primary);">82</div>
+                <div style="font-size:0.65rem;color:var(--text-muted);">/100</div>
+              </div>
+            </div>
+          </div>
+          <!-- Score Breakdown -->
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:5px;">
+                <span style="color:var(--text-secondary);">Keywords Match</span><span style="color:var(--primary);font-weight:600;">88%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:88%;background:linear-gradient(90deg,var(--primary),var(--primary-dark));"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:5px;">
+                <span style="color:var(--text-secondary);">Skills Relevance</span><span style="color:var(--accent-light);font-weight:600;">79%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:79%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:5px;">
+                <span style="color:var(--text-secondary);">Formatting</span><span style="color:var(--success);font-weight:600;">91%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:91%;background:linear-gradient(90deg,var(--success),#20A744);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:5px;">
+                <span style="color:var(--text-secondary);">Experience Match</span><span style="color:var(--warning);font-weight:600;">74%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:74%;background:linear-gradient(90deg,var(--warning),#E88A00);"></div></div>
+            </div>
+          </div>
+          <!-- Strengths / Weaknesses -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+            <div style="background:rgba(48,209,88,0.07);border:1px solid rgba(48,209,88,0.15);border-radius:var(--radius-md);padding:12px;">
+              <div style="font-size:0.75rem;font-weight:600;color:var(--success);margin-bottom:8px;">✓ Strengths</div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.6;">Strong Technical Skills<br>Good Project Experience<br>Clear Formatting</div>
+            </div>
+            <div style="background:rgba(255,77,109,0.07);border:1px solid rgba(255,77,109,0.15);border-radius:var(--radius-md);padding:12px;">
+              <div style="font-size:0.75rem;font-weight:600;color:var(--danger);margin-bottom:8px;">✗ To Improve</div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.6;">Missing Certifications<br>Weak Summary Section<br>Add Power BI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section" id="testimonials">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:48px;">
+        <span class="section-eyebrow">User Stories</span>
+        <h2 class="section-title">From Students to Senior Engineers</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"CVMatch helped me improve my resume from a 58 ATS score to 89. I got 3 interview calls within a week of uploading the improved version."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:rgba(0,217,192,0.15);color:var(--primary);">PS</div>
+            <div>
+              <div class="author-name">Priya Sharma</div>
+              <div class="author-role">SWE at Flipkart · B.Tech IT, 2024</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card" style="border-color:var(--border-accent);">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"The job matching is incredible — it showed me a 91% match with a startup I hadn't heard of. Applied, got an offer. The AI chatbot is like having a career mentor on demand."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:rgba(124,92,252,0.15);color:var(--accent-light);">RK</div>
+            <div>
+              <div class="author-name">Rahul Kumar</div>
+              <div class="author-role">Data Analyst at Razorpay</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"As a fresher, I had no idea what ATS even meant. CVMatch walked me through everything, rewrote my weak bullet points, and I landed my first internship at Internshala!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:rgba(255,215,0,0.1);color:var(--gold-soft);">AM</div>
+            <div>
+              <div class="author-name">Ananya Mehta</div>
+              <div class="author-role">Data Science Intern · 3rd Year B.Tech</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing" style="background:var(--bg-surface);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle);">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:56px;">
+        <span class="section-eyebrow">Simple Pricing</span>
+        <h2 class="section-title">Start Free. Upgrade When Ready.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:720px;margin:0 auto;">
+        <div class="pricing-card">
+          <div style="font-family:var(--font-display);font-weight:700;font-size:1.2rem;margin-bottom:8px;">Free</div>
+          <div class="pricing-price">₹0 <span style="font-size:1rem;font-weight:400;color:var(--text-muted);">/month</span></div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin:16px 0 24px;">Perfect for getting started</p>
+          <ul class="pricing-list" style="margin-bottom:28px;">
+            <li><span class="check">✓</span> 3 Resume Scans / month</li>
+            <li><span class="check">✓</span> ATS Score Report</li>
+            <li><span class="check">✓</span> 10 Job Matches</li>
+            <li><span class="check">✓</span> Basic AI Chat (10 messages)</li>
+            <li><span class="cross" style="color:var(--text-muted);">✗</span> <span style="color:var(--text-muted);">Unlimited Analysis</span></li>
+            <li><span class="cross" style="color:var(--text-muted);">✗</span> <span style="color:var(--text-muted);">AI Resume Rewriter</span></li>
+          </ul>
+          <a href="pages/dashboard.html" class="btn btn-secondary" style="width:100%;justify-content:center;">Get Started Free</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pricing-badge">🔥 Most Popular</div>
+          <div style="font-family:var(--font-display);font-weight:700;font-size:1.2rem;margin-bottom:8px;">Premium</div>
+          <div class="pricing-price">₹<span>299</span> <span style="font-size:1rem;font-weight:400;color:var(--text-muted);">/month</span></div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin:16px 0 24px;">Everything you need to land the job</p>
+          <ul class="pricing-list" style="margin-bottom:28px;">
+            <li><span class="check">✓</span> Unlimited Resume Analysis</li>
+            <li><span class="check">✓</span> Unlimited ATS Reports</li>
+            <li><span class="check">✓</span> Unlimited Job Matching</li>
+            <li><span class="check">✓</span> AI Resume Rewriter</li>
+            <li><span class="check">✓</span> AI Cover Letter Generator</li>
+            <li><span class="check">✓</span> AI Interview Coach (Soon)</li>
+          </ul>
+          <a href="pages/dashboard.html" class="btn btn-primary" style="width:100%;justify-content:center;">Start Premium Trial</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-section">
+        <span class="section-eyebrow">Ready to Start?</span>
+        <h2 style="font-family:var(--font-display);font-size:2.5rem;font-weight:800;margin-bottom:16px;line-height:1.2;">Your Dream Job is<br><span class="text-gradient">One Upload Away</span></h2>
+        <p style="color:var(--text-secondary);font-size:1rem;margin-bottom:40px;max-width:480px;margin-left:auto;margin-right:auto;">Upload your resume now and get your ATS score, job matches, and personalized improvement plan — completely free.</p>
+        <a href="pages/analyzer.html" class="btn btn-primary btn-lg" style="font-size:1.05rem;padding:16px 40px;">
+          🚀 Analyze My Resume — It's Free
+        </a>
+        <div style="margin-top:20px;color:var(--text-muted);font-size:0.8rem;">No credit card required · Takes 30 seconds · Works for any industry</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo" style="margin-bottom:12px;">
+            <div class="logo-icon">🎯</div>
+            CV<span style="color:var(--primary);">Match</span>
+          </div>
+          <p>AI-powered resume analysis and intelligent job matching for students and professionals. Get the career you deserve.</p>
+        </div>
+        <div>
+          <div class="footer-links-title">Product</div>
+          <ul class="footer-links">
+            <li><a href="pages/analyzer.html">Resume Analyzer</a></li>
+            <li><a href="pages/jobs.html">Job Matching</a></li>
+            <li><a href="pages/chatbot.html">AI Assistant</a></li>
+            <li><a href="pages/dashboard.html">Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-links-title">For Students</div>
+          <ul class="footer-links">
+            <li><a href="pages/jobs.html?type=internship">Internships</a></li>
+            <li><a href="#">Campus Placements</a></li>
+            <li><a href="#">Skill Gap Analysis</a></li>
+            <li><a href="#">Learning Path</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-links-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2025 CVMatch. Built for B.Tech students and beyond.</div>
+        <div style="display:flex;gap:16px;">
+          <a href="#" style="color:var(--text-muted);">Twitter</a>
+          <a href="#" style="color:var(--text-muted);">LinkedIn</a>
+          <a href="#" style="color:var(--text-muted);">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 20) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>

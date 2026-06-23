@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile & Settings – CVMatch</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: var(--bg-base); }
+    .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+    .profile-header {
+      background: linear-gradient(135deg, rgba(0,217,192,0.08), rgba(124,92,252,0.08));
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2300D9C0' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .profile-header > * { position: relative; z-index: 1; }
+    .avatar-large {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 800; color: var(--bg-base);
+      font-family: var(--font-display);
+      box-shadow: 0 0 30px rgba(0,217,192,0.3);
+      flex-shrink: 0;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 0; }
+    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .form-input {
+      width: 100%; padding: 11px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      color: var(--text-primary); font-size: 0.875rem;
+      outline: none; transition: var(--transition-base);
+    }
+    .form-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .form-input::placeholder { color: var(--text-muted); }
+    .settings-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .settings-section-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .settings-section-desc { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 24px; }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-label { font-size: 0.875rem; font-weight: 500; }
+    .toggle-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+    .toggle {
+      width: 44px; height: 24px; border-radius: var(--radius-full);
+      background: var(--bg-elevated); border: 1px solid var(--border-soft);
+      cursor: pointer; position: relative; transition: var(--transition-base);
+      flex-shrink: 0;
+    }
+    .toggle.on { background: var(--primary); border-color: var(--primary); }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: white; top: 2px; left: 2px;
+      transition: var(--transition-base);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle.on::after { left: 22px; }
+    .plan-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .plan-card.premium { border-color: var(--border-accent); background: var(--primary-glow); }
+    .danger-zone {
+      border: 1px solid rgba(255,77,109,0.2);
+      background: rgba(255,77,109,0.04);
+    }
+    .skill-input-area {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      min-height: 60px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      cursor: text;
+      transition: var(--transition-base);
+    }
+    .skill-input-area:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .skill-chip-editable {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      background: var(--primary-glow);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-full);
+      font-size: 0.78rem; color: var(--primary); font-weight: 500;
+    }
+    .remove-chip { cursor: pointer; opacity: 0.6; }
+    .remove-chip:hover { opacity: 1; }
+    .skill-text-input {
+      border: none; background: none; outline: none;
+      color: var(--text-primary); font-size: 0.82rem; min-width: 100px;
+    }
+    .tab-nav { display: flex; gap: 2px; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); }
+    .tab-nav-btn {
+      padding: 10px 20px;
+      border: none; background: none;
+      color: var(--text-muted); font-size: 0.875rem; font-weight: 500;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: var(--transition-fast); margin-bottom: -1px;
+    }
+    .tab-nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-nav-btn:hover:not(.active) { color: var(--text-primary); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">🎯</div>
+      <span>CV<span style="color:var(--primary);">Match</span></span>
+    </div>
+    <div class="sidebar-section-label">Main</div>
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a></li>
+      <li class="sidebar-nav-item"><a href="analyzer.html"><span class="nav-icon">📄</span> Resume Analyzer</a></li>
+      <li class="sidebar-nav-item"><a href="jobs.html"><span class="nav-icon">💼</span> Job Matches</a></li>
+      <li class="sidebar-nav-item"><a href="chatbot.html"><span class="nav-icon">🤖</span> AI Assistant</a></li>
+    </ul>
+    <div class="sidebar-section-label">Account</div>
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="profile.html" class="active"><span class="nav-icon">👤</span> Profile & Settings</a></li>
+      <li class="sidebar-nav-item"><a href="../index.html"><span class="nav-icon">🚪</span> Sign Out</a></li>
+    </ul>
+  </div>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="page-header">
+      <div class="page-title">Profile & Settings</div>
+      <div class="page-subtitle">Manage your account, preferences, and career profile.</div>
+    </div>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="avatar-large">PS</div>
+      <div style="flex:1;">
+        <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;">Priya Sharma</div>
+        <div style="color:var(--text-muted);font-size:0.875rem;margin-top:2px;">priya.sharma@email.com · B.Tech IT Student · Ludhiana, Punjab</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
+          <span class="badge badge-primary">Free Plan</span>
+          <span class="badge badge-success">ATS Score: 82</span>
+          <span class="badge badge-accent">247 Job Matches</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+    </div>
+
+    <!-- Tab Nav -->
+    <div class="tab-nav">
+      <button class="tab-nav-btn active" onclick="switchSettingsTab(this,'personal')">👤 Personal Info</button>
+      <button class="tab-nav-btn" onclick="switchSettingsTab(this,'career')">🎯 Career Profile</button>
+      <button class="tab-nav-btn" onclick="switchSettingsTab(this,'notifications')">🔔 Notifications</button>
+      <button class="tab-nav-btn" onclick="switchSettingsTab(this,'billing')">💳 Plan & Billing</button>
+      <button class="tab-nav-btn" onclick="switchSettingsTab(this,'privacy')">🔐 Privacy</button>
+    </div>
+
+    <!-- ── Personal Info Tab ── -->
+    <div id="tab-personal">
+      <div class="settings-section">
+        <div class="settings-section-title">Personal Information</div>
+        <div class="settings-section-desc">Your basic profile details shown to recruiters (if opted in).</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" class="form-input" value="Priya">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" class="form-input" value="Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" value="priya.sharma@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" value="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label class="form-label">City / Location</label>
+            <input type="text" class="form-input" value="Ludhiana, Punjab">
+          </div>
+          <div class="form-group">
+            <label class="form-label">I am a...</label>
+            <select class="form-input">
+              <option selected>B.Tech Student (3rd / 4th Year)</option>
+              <option>Fresher (0-1 year experience)</option>
+              <option>Working Professional (1-3 years)</option>
+              <option>Senior Professional (3+ years)</option>
+              <option>MBA Student</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn URL</label>
+            <input type="url" class="form-input" value="linkedin.com/in/priya-sharma" placeholder="linkedin.com/in/your-name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">GitHub URL</label>
+            <input type="url" class="form-input" value="github.com/priya-dev" placeholder="github.com/your-username">
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <label class="form-label">Bio / About Me</label>
+          <textarea class="form-input" rows="3" placeholder="A brief introduction about yourself and your career goals..." style="resize:vertical;">B.Tech IT student at LPU with strong interest in AI/ML and full-stack development. Looking for SDE / Data Analyst roles post-graduation in June 2025.</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Career Profile Tab ── -->
+    <div id="tab-career" style="display:none;">
+      <div class="settings-section">
+        <div class="settings-section-title">Career Preferences</div>
+        <div class="settings-section-desc">Tell us what you're looking for. We'll use this to personalise your job matches.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Target Role</label>
+            <input type="text" class="form-input" value="Software Engineer / Data Analyst" placeholder="e.g. Software Engineer, Data Scientist">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Job Type Preference</label>
+            <select class="form-input">
+              <option>Full-time Jobs</option>
+              <option>Internships</option>
+              <option selected>Both Jobs & Internships</option>
+              <option>Contract / Freelance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expected Salary (LPA)</label>
+            <input type="text" class="form-input" value="8-15 LPA" placeholder="e.g. 8-12 LPA">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Work Mode</label>
+            <select class="form-input">
+              <option>On-site Only</option>
+              <option>Remote Only</option>
+              <option selected>Hybrid (Preferred)</option>
+              <option>Open to Any</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preferred Cities</label>
+            <input type="text" class="form-input" value="Bangalore, Remote" placeholder="Bangalore, Mumbai, Remote...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Availability</label>
+            <select class="form-input">
+              <option>Immediately Available</option>
+              <option selected>Available from June 2025</option>
+              <option>1 Month Notice</option>
+              <option>2-3 Months Notice</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Your Skills</div>
+        <div class="settings-section-desc">Add your skills below. CVMatch uses these to match you with the best jobs.</div>
+        <div class="skill-input-area" id="skillInputArea" onclick="document.getElementById('skillInput').focus()">
+          <span class="skill-chip-editable">Python <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">React.js <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">Machine Learning <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">SQL <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">TensorFlow <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">FastAPI <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">AWS <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <span class="skill-chip-editable">Docker <span class="remove-chip" onclick="removeSkill(this)">×</span></span>
+          <input class="skill-text-input" id="skillInput" placeholder="Type a skill and press Enter..." onkeydown="addSkill(event)">
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;">Press Enter to add · Click × to remove</div>
+      </div>
+    </div>
+
+    <!-- ── Notifications Tab ── -->
+    <div id="tab-notifications" style="display:none;">
+      <div class="settings-section">
+        <div class="settings-section-title">Email Notifications</div>
+        <div class="settings-section-desc">Choose which emails CVMatch sends you.</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">New Job Matches</div><div class="toggle-desc">Daily digest of top job matches based on your profile</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Application Deadlines</div><div class="toggle-desc">Reminders 24h before saved jobs close</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">ATS Score Tips</div><div class="toggle-desc">Weekly tips to improve your resume score</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Product Updates</div><div class="toggle-desc">New features and improvements to CVMatch</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Marketing Emails</div><div class="toggle-desc">Promotions, offers, and partner announcements</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">In-App Notifications</div>
+        <div class="settings-section-desc">Control what appears in your notification bell.</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">High Match Jobs (85%+)</div><div class="toggle-desc">Instant alert for excellent job matches</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Resume Score Change</div><div class="toggle-desc">When AI detects your score could be improved</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">AI Chat Suggestions</div><div class="toggle-desc">Proactive tips from the AI career assistant</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Billing Tab ── -->
+    <div id="tab-billing" style="display:none;">
+      <div class="settings-section">
+        <div class="settings-section-title">Current Plan</div>
+        <div class="settings-section-desc">Manage your CVMatch subscription.</div>
+        <div class="plan-card" style="margin-bottom:12px;">
+          <div>
+            <div style="font-family:var(--font-display);font-weight:700;margin-bottom:4px;">Free Plan</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);">3 resume scans · 10 job matches · Limited AI chat</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;">₹0</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">per month</div>
+          </div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:5px;"><span style="color:var(--text-secondary);">Resume scans used</span><span style="font-weight:600;">2 / 3</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:66%;background:linear-gradient(90deg,var(--warning),#E88A00);"></div></div>
+        </div>
+        <div class="plan-card premium">
+          <div>
+            <div style="font-family:var(--font-display);font-weight:700;margin-bottom:4px;">Premium Plan 🚀</div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);max-width:300px;">Unlimited scans · Unlimited job matches · AI resume rewriter · Cover letter generator · Interview coach</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;color:var(--primary);">₹299</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">per month</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="upgradePlan()">Upgrade Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Privacy Tab ── -->
+    <div id="tab-privacy" style="display:none;">
+      <div class="settings-section">
+        <div class="settings-section-title">Privacy Settings</div>
+        <div class="settings-section-desc">Control how CVMatch uses and shares your data.</div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Profile visible to recruiters</div><div class="toggle-desc">Allow verified recruiters to find your profile</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Anonymous resume analysis</div><div class="toggle-desc">Strip personal details before AI analysis</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="toggle-row">
+          <div><div class="toggle-label">Usage analytics</div><div class="toggle-desc">Help improve CVMatch by sharing anonymous usage data</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <div class="settings-section danger-zone">
+        <div class="settings-section-title" style="color:var(--danger);">⚠ Danger Zone</div>
+        <div class="settings-section-desc">These actions are irreversible. Please proceed with caution.</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn" style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--danger);" onclick="if(confirm('Delete all your resume data?')) showToast('Data deleted','success')">Delete My Resume Data</button>
+          <button class="btn" style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);color:var(--danger);" onclick="if(confirm('This will permanently delete your account. Continue?')) window.location.href='../index.html'">Delete My Account</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div style="position:sticky;bottom:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius-xl);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-lg);margin-top:24px;">
+      <div style="font-size:0.85rem;color:var(--text-muted);">Changes are saved automatically when you click Save.</div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-secondary" onclick="window.location.reload()">Discard Changes</button>
+        <button class="btn btn-primary" onclick="saveProfile()">Save All Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  function switchSettingsTab(btn, tab) {
+    document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    ['personal','career','notifications','billing','privacy'].forEach(t => {
+      const el = document.getElementById('tab-' + t);
+      if (el) el.style.display = t === tab ? 'block' : 'none';
+    });
+  }
+
+  function addSkill(e) {
+    if (e.key !== 'Enter') return;
+    const input = document.getElementById('skillInput');
+    const val = input.value.trim();
+    if (!val) return;
+    const area = document.getElementById('skillInputArea');
+    const chip = document.createElement('span');
+    chip.className = 'skill-chip-editable';
+    chip.innerHTML = `${val} <span class="remove-chip" onclick="removeSkill(this)">×</span>`;
+    area.insertBefore(chip, input);
+    input.value = '';
+    showToast(`✓ Added: ${val}`, 'success');
+  }
+
+  function removeSkill(el) {
+    el.parentElement.remove();
+  }
+
+  function saveProfile() {
+    showToast('✓ Profile saved successfully!', 'success');
+  }
+
+  function upgradePlan() {
+    showToast('Opening payment gateway...', 'info');
+    setTimeout(() => showToast('🎉 Welcome to Premium! (Demo)', 'success'), 1500);
+  }
+
+  function showToast(msg, type) {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span><span>${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+</script>
+</body>
+</html>

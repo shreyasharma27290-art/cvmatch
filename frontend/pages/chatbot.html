@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Assistant – CVMatch</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { overflow: hidden; }
+    .chatbot-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      height: 100vh;
+    }
+    .chat-sidebar-left {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-sidebar-right {
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidebar-header {
+      padding: 20px 16px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .chat-history-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      margin: 2px 8px;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .chat-history-item:hover { background: var(--bg-elevated); }
+    .chat-history-item.active { background: var(--primary-glow); }
+    .chat-history-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text-muted);
+      margin-top: 6px; flex-shrink: 0;
+    }
+    .chat-history-item.active .chat-history-dot { background: var(--primary); }
+    .chat-history-title { font-size: 0.82rem; font-weight: 500; line-height: 1.4; }
+    .chat-history-time { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+    .chat-main { display: flex; flex-direction: column; background: var(--bg-base); }
+    .chat-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+    }
+    .message-content { width: 100%; }
+    .message-content p { margin-bottom: 8px; }
+    .message-content p:last-child { margin-bottom: 0; }
+    .message-content strong { color: var(--primary); font-weight: 600; }
+    .message-content ul { margin: 8px 0 8px 16px; }
+    .message-content li { margin-bottom: 4px; font-size: 0.9rem; }
+    .message-content code {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.82rem;
+      font-family: monospace;
+      color: var(--primary);
+    }
+    .suggestion-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      padding: 12px 24px 0;
+    }
+    .chip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-full);
+      padding: 7px 14px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
+    .chip:hover {
+      background: var(--primary-glow);
+      border-color: var(--border-accent);
+      color: var(--primary);
+    }
+    .insight-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin: 0 12px 10px;
+    }
+    .insight-card-title {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--text-muted); margin-bottom: 8px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .skill-bar-item { margin-bottom: 10px; }
+    .skill-bar-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 4px; }
+    .send-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none; color: var(--text-on-primary);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; cursor: pointer; flex-shrink: 0;
+      transition: var(--transition-fast);
+    }
+    .send-btn:hover { transform: scale(1.08); box-shadow: 0 0 16px rgba(0,217,192,0.4); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .model-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--primary-glow);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 0.75rem; font-weight: 600; color: var(--primary);
+    }
+    .new-chat-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: calc(100% - 16px); margin: 8px;
+      padding: 10px 14px;
+      background: var(--primary-glow);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-md);
+      color: var(--primary); font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition-fast);
+    }
+    .new-chat-btn:hover { background: var(--primary); color: var(--text-on-primary); }
+  </style>
+</head>
+<body>
+  <div class="chatbot-layout">
+
+    <!-- LEFT SIDEBAR: History -->
+    <div class="chat-sidebar-left">
+      <div class="sidebar-header">
+        <a href="../index.html" style="color:var(--text-muted);font-size:0.8rem;display:block;margin-bottom:12px;">← Back</a>
+        <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;">AI Career Assistant</div>
+      </div>
+      <div style="padding:8px 0;">
+        <button class="new-chat-btn" onclick="startNewChat()">
+          <span style="font-size:1rem;">+</span> New Conversation
+        </button>
+      </div>
+      <div style="padding:8px 16px 4px;font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Today</div>
+      <div style="overflow-y:auto;flex:1;">
+        <div class="chat-history-item active">
+          <div class="chat-history-dot"></div>
+          <div>
+            <div class="chat-history-title">Resume improvement for Data Engineer role</div>
+            <div class="chat-history-time">Just now</div>
+          </div>
+        </div>
+        <div class="chat-history-item">
+          <div class="chat-history-dot"></div>
+          <div>
+            <div class="chat-history-title">Interview prep – TCS Digital</div>
+            <div class="chat-history-time">2h ago</div>
+          </div>
+        </div>
+        <div style="padding:8px 16px 4px;font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Yesterday</div>
+        <div class="chat-history-item">
+          <div class="chat-history-dot"></div>
+          <div>
+            <div class="chat-history-title">Skills roadmap for AI/ML career</div>
+            <div class="chat-history-time">Yesterday</div>
+          </div>
+        </div>
+        <div class="chat-history-item">
+          <div class="chat-history-dot"></div>
+          <div>
+            <div class="chat-history-title">Python project ideas for portfolio</div>
+            <div class="chat-history-time">Yesterday</div>
+          </div>
+        </div>
+        <div style="padding:8px 16px 4px;font-size:0.7rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">This Week</div>
+        <div class="chat-history-item">
+          <div class="chat-history-dot"></div>
+          <div>
+            <div class="chat-history-title">Cover letter for Infosys SDE role</div>
+            <div class="chat-history-time">3 days ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: Chat -->
+    <div class="chat-main">
+      <!-- Top Bar -->
+      <div class="chat-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="ai-avatar" style="width:36px;height:36px;font-size:1rem;">🤖</div>
+          <div>
+            <div style="font-family:var(--font-display);font-weight:600;font-size:0.95rem;">Career Assistant</div>
+            <div class="ai-status"><div class="ai-status-dot"></div>Online & Ready</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="model-badge">⚡ Powered by Claude</div>
+          <button class="btn btn-secondary btn-sm" onclick="clearChat()">Clear Chat</button>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMessages">
+        <!-- Welcome Message -->
+        <div class="message message-ai">
+          <div class="message-avatar">🤖</div>
+          <div>
+            <div class="message-bubble">
+              <div class="message-content">
+                <p>👋 Hi! I'm your <strong>AI Career Assistant</strong>, powered by Claude.</p>
+                <p>I can help you with:</p>
+                <ul>
+                  <li>📊 Resume review and ATS optimization</li>
+                  <li>🎯 Job matching and application strategy</li>
+                  <li>💡 Skill gap analysis and learning roadmaps</li>
+                  <li>🎙️ Interview preparation and mock questions</li>
+                  <li>✍️ Cover letter writing</li>
+                  <li>🚀 Career path planning</li>
+                </ul>
+                <p>What would you like to work on today?</p>
+              </div>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;padding-left:4px;">Career Assistant • Just now</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Prompts -->
+      <div class="suggestion-chips" id="quickChips">
+        <button class="chip" onclick="sendQuick('How can I improve my resume for a Data Analyst role?')">📊 Improve resume for Data Analyst</button>
+        <button class="chip" onclick="sendQuick('What skills should I learn for AI/ML jobs in 2025?')">🤖 Skills for AI/ML jobs</button>
+        <button class="chip" onclick="sendQuick('Prepare me for a TCS interview with common questions.')">🎙️ TCS interview prep</button>
+        <button class="chip" onclick="sendQuick('Suggest 5 impressive Python projects for my portfolio.')">💡 Python project ideas</button>
+        <button class="chip" onclick="sendQuick('Write a cover letter for a Software Engineer internship.')">✍️ Write a cover letter</button>
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <textarea class="chat-input" id="chatInput" rows="1"
+            placeholder="Ask anything about your career, resume, interview prep..."
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+        <div style="text-align:center;margin-top:8px;font-size:0.7rem;color:var(--text-muted);">
+          CVMatch AI may make mistakes. Verify important career decisions independently.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR: Insights -->
+    <div class="chat-sidebar-right">
+      <div class="sidebar-header">
+        <div style="font-family:var(--font-display);font-weight:700;font-size:0.95rem;">Your Profile</div>
+        <div style="color:var(--text-muted);font-size:0.78rem;margin-top:2px;">Based on your resume</div>
+      </div>
+
+      <!-- Resume Score -->
+      <div class="insight-card" style="margin-top:12px;">
+        <div class="insight-card-title">ATS Score</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--primary);">82</div>
+          <div>
+            <div class="badge badge-success" style="margin-bottom:4px;">Good</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);">↑ 12 pts from last scan</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Skills -->
+      <div class="insight-card">
+        <div class="insight-card-title">Your Top Skills</div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span style="color:var(--text-secondary);font-size:0.78rem;">Python</span><span style="color:var(--primary);font-weight:600;font-size:0.78rem;">95%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:95%;"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span style="color:var(--text-secondary);font-size:0.78rem;">Machine Learning</span><span style="color:var(--primary);font-weight:600;font-size:0.78rem;">78%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:78%;"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span style="color:var(--text-secondary);font-size:0.78rem;">SQL</span><span style="color:var(--primary);font-weight:600;font-size:0.78rem;">82%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:82%;"></div></div>
+        </div>
+        <div class="skill-bar-item">
+          <div class="skill-bar-label"><span style="color:var(--text-secondary);font-size:0.78rem;">React.js</span><span style="color:var(--primary);font-weight:600;font-size:0.78rem;">70%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:70%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));"></div></div>
+        </div>
+      </div>
+
+      <!-- Skill Gaps -->
+      <div class="insight-card">
+        <div class="insight-card-title">⚡ Skill Gaps to Fill</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Power BI</span>
+            <span class="badge badge-danger" style="font-size:0.65rem;">High Priority</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Tableau</span>
+            <span class="badge badge-warning" style="font-size:0.65rem;">Medium</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Apache Spark</span>
+            <span class="badge badge-warning" style="font-size:0.65rem;">Medium</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Kubernetes</span>
+            <span class="badge badge-primary" style="font-size:0.65rem;">Low</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matched Jobs Counter -->
+      <div class="insight-card">
+        <div class="insight-card-title">🎯 Job Matches Found</div>
+        <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--accent-light);margin-bottom:4px;">247</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;">Jobs matching your profile</div>
+        <a href="jobs.html" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">Browse Jobs →</a>
+      </div>
+
+      <!-- Quick Actions -->
+      <div style="padding:0 12px 12px;">
+        <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <a href="analyzer.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-secondary);font-size:0.8rem;transition:var(--transition-fast);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">📊 Re-analyze Resume</a>
+          <a href="jobs.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-secondary);font-size:0.8rem;transition:var(--transition-fast);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">🎯 Browse Matched Jobs</a>
+          <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-md);color:var(--text-secondary);font-size:0.8rem;transition:var(--transition-fast);" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">📈 View Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
+
+    const SYSTEM_PROMPT = `You are an expert AI Career Assistant for CVMatch, a career platform for students and professionals in India. You help users with:
+- Resume review and ATS optimization
+- Job matching strategy and application tips
+- Skill gap analysis and learning roadmaps (focus on Indian IT market: TCS, Infosys, Wipro, startups)
+- Interview preparation with company-specific tips
+- Cover letter writing
+- Career path planning for B.Tech/MCA/MBA students
+
+Be concise, actionable, and encouraging. Use bullet points and structure for clarity. When relevant, mention specific platforms like Internshala, Naukri, LinkedIn. Always tailor advice to the Indian job market context where appropriate.`;
+
+    let conversationHistory = [];
+    let isTyping = false;
+
+    function autoResize(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || isTyping) return;
+
+      // Hide quick chips after first message
+      document.getElementById('quickChips').style.display = 'none';
+
+      appendMessage('user', text);
+      input.value = '';
+      input.style.height = 'auto';
+      conversationHistory.push({ role: 'user', content: text });
+
+      await streamAIResponse();
+    }
+
+    function sendQuick(text) {
+      document.getElementById('chatInput').value = text;
+      sendMessage();
+    }
+
+    function appendMessage(role, content) {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message message-${role === 'user' ? 'user' : 'ai'}`;
+
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const avatar = role === 'user'
+        ? `<div class="message-avatar" style="background:var(--bg-elevated);border:1px solid var(--border-soft);">👤</div>`
+        : `<div class="message-avatar" style="background:linear-gradient(135deg,var(--primary),var(--accent));">🤖</div>`;
+
+      div.innerHTML = `
+        ${avatar}
+        <div>
+          <div class="message-bubble" id="msg-${Date.now()}">
+            <div class="message-content">${formatMessage(content)}</div>
+          </div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;padding-left:4px;">${role === 'user' ? 'You' : 'Career Assistant'} • ${now}</div>
+        </div>`;
+
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+      return div;
+    }
+
+    function formatMessage(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/^• (.*?)$/gm, '<li>$1</li>')
+        .replace(/^- (.*?)$/gm, '<li>$1</li>')
+        .replace(/^(\d+)\. (.*?)$/gm, '<li>$2</li>')
+        .replace(/<li>/g, '</p><ul><li>').replace(/<\/li>\n<li>/g, '</li><li>')
+        .replace(/<\/li>(?!<li>)/g, '</li></ul><p>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>')
+        .replace(/^/, '<p>').replace(/$/, '</p>')
+        .replace(/<p><\/p>/g, '')
+        .replace(/<\/ul><p><\/p>/g, '</ul>');
+    }
+
+    function showTypingIndicator() {
+      const container = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'message message-ai';
+      div.id = 'typingIndicator';
+      div.innerHTML = `
+        <div class="message-avatar" style="background:linear-gradient(135deg,var(--primary),var(--accent));">🤖</div>
+        <div class="message-bubble">
+          <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    async function streamAIResponse() {
+      isTyping = true;
+      document.getElementById('sendBtn').disabled = true;
+      showTypingIndicator();
+
+      try {
+        const response = await fetch(ANTHROPIC_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            system: SYSTEM_PROMPT,
+            messages: conversationHistory
+          })
+        });
+
+        const data = await response.json();
+        removeTypingIndicator();
+
+        let aiText = '';
+        if (data.content && data.content[0]) {
+          aiText = data.content[0].text;
+        } else {
+          aiText = getDemoResponse(conversationHistory[conversationHistory.length - 1].content);
+        }
+
+        conversationHistory.push({ role: 'assistant', content: aiText });
+        appendMessage('ai', aiText);
+
+      } catch (err) {
+        removeTypingIndicator();
+        // Use demo response as fallback
+        const userMsg = conversationHistory[conversationHistory.length - 1].content;
+        const demoResp = getDemoResponse(userMsg);
+        conversationHistory.push({ role: 'assistant', content: demoResp });
+        appendMessage('ai', demoResp);
+      }
+
+      isTyping = false;
+      document.getElementById('sendBtn').disabled = false;
+    }
+
+    function getDemoResponse(userMessage) {
+      const msg = userMessage.toLowerCase();
+      if (msg.includes('resume') || msg.includes('ats')) {
+        return `**Here's how to improve your resume for ATS systems:**
+
+**Immediate wins (do these first):**
+- Add a 2-3 sentence professional summary at the top
+- Include exact keywords from the job description in your skills section
+- Quantify every achievement: "Improved API performance by 40%" instead of "Improved performance"
+- Use standard section headings: Experience, Education, Skills, Projects
+
+**Keyword strategy:**
+- Use the exact terminology from the job posting
+- Include both acronyms and full forms: "ML (Machine Learning)"
+- Add a dedicated "Technical Skills" section with categorized tools
+
+**Format rules:**
+- Use a simple, single-column layout
+- Avoid tables, text boxes, and headers/footers
+- Save as PDF (unless specifically asked for DOCX)
+
+Your current ATS score is **82/100** — a few tweaks can push it to **90+**. Want me to rewrite any specific section?`;
+      }
+      if (msg.includes('interview') || msg.includes('tcs') || msg.includes('prep')) {
+        return `**Interview Preparation Guide:**
+
+**For TCS Digital specifically:**
+- **Round 1:** Aptitude + Verbal + Programming (HackerRank) — practice on PrepInsta
+- **Round 2:** Technical Interview — focus on DSA, OOP, DBMS, OS concepts
+- **Round 3:** Managerial + HR
+
+**Top technical questions to prepare:**
+1. Explain OOPS concepts with real examples
+2. Write code for: Fibonacci, Palindrome, Linked List reversal
+3. Difference between process and thread
+4. What is normalization? (1NF, 2NF, 3NF)
+5. Explain REST API principles
+
+**Commonly asked HR questions:**
+- "Tell me about yourself" — prepare a 2-minute pitch
+- "Where do you see yourself in 5 years?"
+- "Why TCS?" — mention their learning culture, scale, digital transformation
+
+**Pro tip:** TCS focuses heavily on communication skills. Practice answering clearly and confidently. Want me to do a mock interview with you right now?`;
+      }
+      if (msg.includes('skill') || msg.includes('learn') || msg.includes('ai') || msg.includes('ml')) {
+        return `**Skills Roadmap for AI/ML Roles in 2025:**
+
+**Foundation (Month 1-2):**
+- Python (if not already strong) — focus on pandas, numpy, matplotlib
+- Statistics & Probability basics
+- Git & GitHub for version control
+
+**Core ML (Month 3-4):**
+- Scikit-learn for classical ML
+- TensorFlow or PyTorch for deep learning
+- Kaggle competitions for practice
+
+**Specialization (Month 5-6):**
+- **NLP Track:** HuggingFace, LangChain, RAG systems
+- **CV Track:** OpenCV, YOLO, image segmentation
+- **MLOps Track:** MLflow, Docker, cloud deployment
+
+**Most in-demand skills right now (Indian market):**
+1. **LLM fine-tuning** — huge demand at AI startups
+2. **RAG (Retrieval Augmented Generation)**
+3. **AWS SageMaker / GCP Vertex AI**
+4. **SQL + Python combo** — every company wants this
+
+**Free resources:**
+- fast.ai (best practical ML course)
+- Kaggle Learn (free certifications)
+- CS50 AI from Harvard (YouTube)
+
+Want a personalized week-by-week study plan based on your current skills?`;
+      }
+      if (msg.includes('project') || msg.includes('portfolio')) {
+        return `**5 Portfolio Projects That Get You Hired:**
+
+**1. 🤖 AI Resume Screener**
+- Build: NLP model that extracts skills from resumes
+- Stack: Python, spaCy, FastAPI, React
+- Wow factor: Deploy it publicly — recruiters love seeing real apps
+
+**2. 📊 Stock Market Sentiment Analyzer**
+- Build: Scrape news → sentiment analysis → price prediction
+- Stack: Python, VADER/BERT, yfinance, Streamlit
+- Wow factor: Real-time dashboard
+
+**3. 🏥 Disease Prediction System**
+- Build: Predict diabetes/heart disease from patient data
+- Stack: Scikit-learn, XGBoost, Flask API
+- Wow factor: Add explainability (SHAP values)
+
+**4. 💬 RAG-based Q&A Bot**
+- Build: Upload PDFs → ask questions → get answers
+- Stack: LangChain, ChromaDB, OpenAI/Claude API, Streamlit
+- Wow factor: This is literally what companies are building right now
+
+**5. 📈 Sales Dashboard + Forecast**
+- Build: Interactive BI dashboard with ML forecasting
+- Stack: Python, Plotly Dash, Prophet, PostgreSQL
+- Wow factor: Looks professional, useful for any domain
+
+**For each project, make sure to:**
+- Write a good README with screenshots
+- Host on Hugging Face Spaces or Railway
+- Add it to your GitHub AND resume bullet points with metrics
+
+Which one interests you most? I can give you a step-by-step build guide!`;
+      }
+      return `**Great question!** Here's what I'd suggest:
+
+**Based on your profile (ATS Score: 82/100):**
+- Your strongest skills are Python, ML, and SQL — focus on roles that leverage these
+- You have 247 job matches — the top ones are Data Analyst and ML Engineer roles
+- Adding Power BI would increase your match rate by ~15%
+
+**My recommendation:**
+1. Spend 30 minutes polishing your professional summary
+2. Apply to your top 10 matched jobs today
+3. Practice 2 data structure problems daily
+
+Is there something specific you'd like to deep dive into — resume, interview prep, or skill building?`;
+    }
+
+    function startNewChat() {
+      conversationHistory = [];
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = `
+        <div class="message message-ai">
+          <div class="message-avatar" style="background:linear-gradient(135deg,var(--primary),var(--accent));">🤖</div>
+          <div>
+            <div class="message-bubble">
+              <div class="message-content">
+                <p>👋 Starting a new conversation! What career challenge can I help you tackle today?</p>
+              </div>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById('quickChips').style.display = 'flex';
+    }
+
+    function clearChat() { startNewChat(); }
+  </script>
+</body>
+</html>

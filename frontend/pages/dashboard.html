@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – CVMatch</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: var(--bg-base); }
+    .dashboard-grid { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .welcome-text { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+    .welcome-sub { color: var(--text-muted); font-size: 0.85rem; margin-top: 2px; }
+    .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .col-full { grid-column: 1/-1; }
+    .activity-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .activity-text { font-size: 0.85rem; color: var(--text-secondary); flex: 1; }
+    .activity-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+    .chart-bar-container { display: flex; align-items: flex-end; gap: 6px; height: 120px; }
+    .chart-bar { flex: 1; border-radius: 4px 4px 0 0; min-width: 24px; transition: opacity var(--transition-fast); cursor: pointer; position: relative; }
+    .chart-bar:hover { opacity: 0.8; }
+    .chart-label { font-size: 0.65rem; color: var(--text-muted); text-align: center; margin-top: 4px; }
+    .quick-action { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all var(--transition-fast); text-decoration: none; color: inherit; }
+    .quick-action:hover { border-color: var(--border-accent); background: var(--primary-glow); transform: translateY(-2px); }
+    .quick-action-icon { width: 40px; height: 40px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .tip-card { background: linear-gradient(135deg, rgba(0,217,192,0.08), rgba(124,92,252,0.08)); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); padding: 16px; }
+    .notification-item { display: flex; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border-subtle); }
+    .notification-item:last-child { border-bottom: none; }
+    .notif-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+    .skill-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-full); font-size: 0.78rem; color: var(--text-secondary); margin: 3px; }
+    .donut-container { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+    .donut-label { position: absolute; text-align: center; }
+    .circular-progress { transform: rotate(-90deg); }
+  </style>
+</head>
+<body>
+  <div class="dashboard-grid">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-badge">🎯</div>
+        <span>CV<span style="color:var(--primary);">Match</span></span>
+      </div>
+      <div class="sidebar-section-label">Main</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="dashboard.html" class="active">
+            <span class="nav-icon">📊</span> Dashboard
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="analyzer.html">
+            <span class="nav-icon">📄</span> Resume Analyzer
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="jobs.html">
+            <span class="nav-icon">💼</span> Job Matches
+            <span class="badge badge-primary" style="margin-left:auto;font-size:0.65rem;">247</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="jobs.html?type=internship">
+            <span class="nav-icon">🎓</span> Internships
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="chatbot.html">
+            <span class="nav-icon">🤖</span> AI Assistant
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-section-label">Tools</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">✍️</span> Resume Builder
+            <span class="badge badge-warning" style="margin-left:auto;font-size:0.6rem;">Soon</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">📝</span> Cover Letter AI
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">🎙️</span> Mock Interview
+            <span class="badge badge-warning" style="margin-left:auto;font-size:0.6rem;">Soon</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">📚</span> Skill Roadmap
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-section-label" style="margin-top:auto;">Account</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">⚙️</span> Settings
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#">
+            <span class="nav-icon">💎</span> Upgrade Plan
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="../index.html">
+            <span class="nav-icon">🚪</span> Sign Out
+          </a>
+        </li>
+      </ul>
+
+      <!-- Plan Badge -->
+      <div style="margin:20px 12px 0;background:var(--primary-glow);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:14px;">
+        <div style="font-size:0.75rem;font-weight:700;color:var(--primary);margin-bottom:4px;">FREE PLAN</div>
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;">2 of 3 scans used this month</div>
+        <div class="progress-bar" style="margin-bottom:10px;"><div class="progress-fill" style="width:66%;"></div></div>
+        <a href="#" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;font-size:0.78rem;">Upgrade to Premium</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Topbar -->
+      <div class="topbar">
+        <div>
+          <div class="welcome-text">Good afternoon, Priya 👋</div>
+          <div class="welcome-sub">Your resume is performing well. Here's your career snapshot.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="btn btn-secondary btn-sm">🔔 <span class="badge badge-danger" style="font-size:0.6rem;padding:2px 5px;">3</span></button>
+          <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius-full);padding:6px 14px 6px 8px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--bg-base);">PS</div>
+            <span style="font-size:0.85rem;font-weight:500;">Priya Sharma</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid" style="margin-bottom:24px;">
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:rgba(0,217,192,0.12);">📊</div>
+          <div class="stat-card-value" style="color:var(--primary);">82</div>
+          <div class="stat-card-label">ATS Score</div>
+          <div class="stat-card-change change-up">↑ +12 from last scan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:rgba(124,92,252,0.12);">💼</div>
+          <div class="stat-card-value" style="color:var(--accent-light);">247</div>
+          <div class="stat-card-label">Job Matches</div>
+          <div class="stat-card-change change-up">↑ 23 new today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:rgba(48,209,88,0.12);">📨</div>
+          <div class="stat-card-value" style="color:var(--success);">8</div>
+          <div class="stat-card-label">Applications Sent</div>
+          <div class="stat-card-change" style="color:var(--text-muted);">This month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon" style="background:rgba(255,215,0,0.1);">🎯</div>
+          <div class="stat-card-value" style="color:var(--gold-soft);">3</div>
+          <div class="stat-card-label">Interview Calls</div>
+          <div class="stat-card-change change-up">↑ 2 this week</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <!-- ATS Score Breakdown -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div style="font-family:var(--font-display);font-weight:600;">ATS Score Breakdown</div>
+            <a href="analyzer.html" class="badge badge-primary" style="cursor:pointer;font-size:0.72rem;text-decoration:none;">Re-scan →</a>
+          </div>
+          <!-- Donut Chart -->
+          <div style="display:flex;align-items:center;gap:20px;">
+            <div class="donut-container">
+              <svg width="100" height="100" class="circular-progress">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--bg-elevated)" stroke-width="10"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="url(#dash1)" stroke-width="10"
+                  stroke-dasharray="264" stroke-dashoffset="47" stroke-linecap="round"/>
+                <defs><linearGradient id="dash1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00D9C0"/><stop offset="100%" stop-color="#7C5CFC"/></linearGradient></defs>
+              </svg>
+              <div class="donut-label">
+                <div style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--primary);">82</div>
+                <div style="font-size:0.6rem;color:var(--text-muted);">/ 100</div>
+              </div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span style="color:var(--text-secondary);">Keywords</span><span style="color:var(--primary);font-weight:600;">88%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:88%;"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span style="color:var(--text-secondary);">Skills</span><span style="color:var(--accent-light);font-weight:600;">79%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:79%;background:linear-gradient(90deg,var(--accent),var(--accent-dark));"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span style="color:var(--text-secondary);">Format</span><span style="color:var(--success);font-weight:600;">91%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:91%;background:linear-gradient(90deg,var(--success),#1A9438);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span style="color:var(--text-secondary);">Experience</span><span style="color:var(--warning);font-weight:600;">74%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:74%;background:linear-gradient(90deg,var(--warning),#E88A00);"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ATS History Chart -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="font-family:var(--font-display);font-weight:600;margin-bottom:20px;">Score History</div>
+          <div class="chart-bar-container">
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:42%;background:linear-gradient(180deg,var(--accent-light),var(--accent));opacity:0.6;" title="58"></div>
+              <div class="chart-label">Jan</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:56%;background:linear-gradient(180deg,var(--accent-light),var(--accent));opacity:0.7;" title="63"></div>
+              <div class="chart-label">Feb</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:62%;background:linear-gradient(180deg,var(--accent-light),var(--accent));opacity:0.75;" title="68"></div>
+              <div class="chart-label">Mar</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:68%;background:linear-gradient(180deg,var(--accent-light),var(--accent));opacity:0.8;" title="71"></div>
+              <div class="chart-label">Apr</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:73%;background:linear-gradient(180deg,var(--accent-light),var(--accent));opacity:0.85;" title="74"></div>
+              <div class="chart-label">May</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;">
+              <div class="chart-bar" style="height:82%;background:linear-gradient(180deg,var(--primary-light),var(--primary));" title="82"></div>
+              <div class="chart-label" style="color:var(--primary);font-weight:600;">Now</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border-subtle);">
+            <div style="font-size:0.78rem;color:var(--text-muted);">Jan – Jun 2025</div>
+            <div class="badge badge-success change-up" style="font-size:0.72rem;">↑ +24 pts improvement</div>
+          </div>
+        </div>
+
+        <!-- Top Job Matches Preview -->
+        <div class="card col-full" style="background:var(--bg-card);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <div style="font-family:var(--font-display);font-weight:600;">Top Job Matches Today</div>
+            <a href="jobs.html" class="btn btn-secondary btn-sm">View All 247 →</a>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            ${[
+              {title:'Software Engineer',company:'Google',match:94,salary:'₹18-25 LPA',type:'Full-time',color:'#4285F4',logo:'G'},
+              {title:'Data Analyst Intern',company:'Razorpay',match:91,salary:'₹25K/mo',type:'Internship',color:'#2EB5C6',logo:'R'},
+              {title:'ML Engineer',company:'Flipkart',match:88,salary:'₹15-20 LPA',type:'Full-time',color:'#F7941E',logo:'F'},
+            ].map(j => `
+              <a href="jobs.html" style="text-decoration:none;">
+                <div class="job-card">
+                  <div class="job-card-header">
+                    <div class="company-logo" style="background:${j.color}22;color:${j.color};">${j.logo}</div>
+                    <div style="flex:1;">
+                      <div style="font-weight:600;font-size:0.88rem;">${j.title}</div>
+                      <div style="color:var(--text-muted);font-size:0.76rem;">${j.company}</div>
+                    </div>
+                    <div class="match-score-pill match-high">${j.match}%</div>
+                  </div>
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <span class="badge ${j.type === 'Internship' ? 'badge-accent' : 'badge-primary'}" style="font-size:0.65rem;">${j.type}</span>
+                    <span style="font-size:0.72rem;color:var(--text-muted);">${j.salary}</span>
+                  </div>
+                </div>
+              </a>`).join('')}
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="font-family:var(--font-display);font-weight:600;margin-bottom:16px;">Recent Activity</div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--success);"></div>
+            <div class="activity-text">Resume re-scanned — ATS score improved to <strong style="color:var(--primary);">82</strong></div>
+            <div class="activity-time">2h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--accent-light);"></div>
+            <div class="activity-text">Applied to <strong>Software Engineer</strong> at Google</div>
+            <div class="activity-time">5h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--primary);"></div>
+            <div class="activity-text">247 new job matches found for your profile</div>
+            <div class="activity-time">1d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--gold-soft);"></div>
+            <div class="activity-text">Saved 4 jobs to your watchlist</div>
+            <div class="activity-time">2d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--warning);"></div>
+            <div class="activity-text">AI suggested adding Power BI to your skills</div>
+            <div class="activity-time">3d ago</div>
+          </div>
+        </div>
+
+        <!-- AI Tip of the Day -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="font-family:var(--font-display);font-weight:600;margin-bottom:16px;">💡 AI Career Tips</div>
+          <div class="tip-card" style="margin-bottom:12px;">
+            <div style="font-size:0.72rem;color:var(--primary);font-weight:600;margin-bottom:6px;">TODAY'S TIP</div>
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;">Your resume lacks a professional summary section. Adding 2-3 sentences at the top can increase ATS score by <strong style="color:var(--primary);">8-12 points</strong> and recruiter engagement by 40%.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--warning);">⚠</span> Add certifications section to boost score
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--success);">✓</span> Your formatting is excellent — ATS-friendly
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--danger);">✗</span> Power BI is missing in 67% of your matches
+            </div>
+          </div>
+          <a href="chatbot.html" class="btn btn-primary btn-sm" style="margin-top:14px;width:100%;justify-content:center;">Ask AI Assistant →</a>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card col-full" style="background:var(--bg-card);">
+          <div style="font-family:var(--font-display);font-weight:600;margin-bottom:16px;">Quick Actions</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <a href="analyzer.html" class="quick-action">
+              <div class="quick-action-icon" style="background:rgba(0,217,192,0.12);">📊</div>
+              <div><div style="font-size:0.85rem;font-weight:600;">Analyze Resume</div><div style="font-size:0.72rem;color:var(--text-muted);">Get ATS score</div></div>
+            </a>
+            <a href="jobs.html" class="quick-action">
+              <div class="quick-action-icon" style="background:rgba(124,92,252,0.12);">💼</div>
+              <div><div style="font-size:0.85rem;font-weight:600;">Browse Jobs</div><div style="font-size:0.72rem;color:var(--text-muted);">247 matches</div></div>
+            </a>
+            <a href="chatbot.html" class="quick-action">
+              <div class="quick-action-icon" style="background:rgba(255,215,0,0.1);">🤖</div>
+              <div><div style="font-size:0.85rem;font-weight:600;">AI Assistant</div><div style="font-size:0.72rem;color:var(--text-muted);">Career advice</div></div>
+            </a>
+            <a href="#" class="quick-action">
+              <div class="quick-action-icon" style="background:rgba(48,209,88,0.1);">📝</div>
+              <div><div style="font-size:0.85rem;font-weight:600;">Cover Letter</div><div style="font-size:0.72rem;color:var(--text-muted);">AI generated</div></div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Detected Skills Cloud -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="font-family:var(--font-display);font-weight:600;margin-bottom:14px;">Your Skill Profile</div>
+          <div>
+            <div style="font-size:0.72rem;color:var(--success);font-weight:600;margin-bottom:6px;">STRONG SKILLS</div>
+            <div style="margin-bottom:12px;">
+              <span class="skill-chip">✓ Python</span>
+              <span class="skill-chip">✓ SQL</span>
+              <span class="skill-chip">✓ Machine Learning</span>
+              <span class="skill-chip">✓ React.js</span>
+              <span class="skill-chip">✓ TensorFlow</span>
+              <span class="skill-chip">✓ Pandas</span>
+              <span class="skill-chip">✓ REST APIs</span>
+              <span class="skill-chip">✓ Git</span>
+            </div>
+            <div style="font-size:0.72rem;color:var(--danger);font-weight:600;margin-bottom:6px;">GAPS TO FILL</div>
+            <div>
+              <span class="skill-chip" style="border-color:rgba(255,77,109,0.3);color:var(--danger);">✗ Power BI</span>
+              <span class="skill-chip" style="border-color:rgba(255,77,109,0.3);color:var(--danger);">✗ Tableau</span>
+              <span class="skill-chip" style="border-color:rgba(255,159,10,0.3);color:var(--warning);">✗ Apache Spark</span>
+              <span class="skill-chip" style="border-color:rgba(255,159,10,0.3);color:var(--warning);">✗ Kubernetes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card" style="background:var(--bg-card);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div style="font-family:var(--font-display);font-weight:600;">Notifications</div>
+            <span class="badge badge-danger" style="font-size:0.65rem;">3 new</span>
+          </div>
+          <div class="notification-item">
+            <div class="notif-icon" style="background:rgba(0,217,192,0.1);">🎯</div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:500;margin-bottom:2px;">New 94% match found</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Software Engineer at Google · 2h ago</div>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notif-icon" style="background:rgba(255,215,0,0.1);">⚡</div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:500;margin-bottom:2px;">Application deadline tomorrow</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">Razorpay Data Analyst Intern · 1d ago</div>
+            </div>
+          </div>
+          <div class="notification-item">
+            <div class="notif-icon" style="background:rgba(48,209,88,0.1);">🎉</div>
+            <div>
+              <div style="font-size:0.82rem;font-weight:500;margin-bottom:2px;">ATS Score improved!</div>
+              <div style="font-size:0.75rem;color:var(--text-muted);">58 → 82 (+24 points) · 2d ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Welcome toast
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-info';
+        toast.innerHTML = `<span>🎯</span><span>3 new job matches found today!</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
