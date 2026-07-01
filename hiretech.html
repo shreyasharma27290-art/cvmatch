@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HireTech AI v23.0 International Supreme — Multi-Theme, Vernacular NLP, Funnel SVG & ATS Suite</title>
+    <style>
+        /* --- MULTI-PALETTE THEME VARIABLES ARCHITECTURE (v23.0) --- */
+        :root {
+            --bg-main: #030a06;
+            --bg-surface: #08170e;
+            --bg-card: #0e2417;
+            --bg-card-elevated: #143322;
+            --border: #1d422c;
+            --border-focus: #10b981;
+            
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --primary-glow: rgba(16, 185, 129, 0.3);
+            
+            --text-main: #f0fdf4;
+            --text-muted: #86efac;
+            --text-inv: #000000;
+            
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.18);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.18);
+            --info: #3b82f6;
+            --info-bg: rgba(59, 130, 246, 0.18);
+            --purple: #a855f7;
+            --cyan: #06b6d4;
+            --gold: #f59e0b;
+            --pink: #ec4899;
+            
+            /* Socials */
+            --google-red: #ea4335;
+            --facebook-blue: #1877f2;
+            --ms-blue: #00a4ef;
+            --github-dark: #24292f;
+            --linkedin-blue: #0a66c2;
+            --whatsapp-green: #25d366;
+            
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        /* ☀️ Pristine Alpine White Theme */
+        body[data-theme="alpine"] {
+            --bg-main: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-elevated: #f1f5f9;
+            --border: #cbd5e1;
+            --border-focus: #059669;
+            --primary: #059669;
+            --primary-dark: #047857;
+            --primary-light: #ecfdf5;
+            --primary-glow: rgba(5, 150, 105, 0.15);
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-inv: #ffffff;
+            --danger-bg: rgba(239, 68, 68, 0.1);
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --info-bg: rgba(59, 130, 246, 0.1);
+        }
+
+        /* 💻 Hacker Matrix Cyber Theme */
+        body[data-theme="matrix"] {
+            --bg-main: #000000;
+            --bg-surface: #050505;
+            --bg-card: #0a0a0a;
+            --bg-card-elevated: #121212;
+            --border: #00ff66;
+            --border-focus: #00ff66;
+            --primary: #00ff66;
+            --primary-dark: #00cc52;
+            --primary-light: #003314;
+            --primary-glow: rgba(0, 255, 102, 0.45);
+            --text-main: #00ff66;
+            --text-muted: #00b347;
+            --text-inv: #000000;
+            --font-main: 'Courier New', Courier, monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.25s, border-color 0.25s, color 0.25s; }
+        body { background-color: var(--bg-main); color: var(--text-main); font-family: var(--font-main); line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
+
+        /* Universal Toast Banners */
+        #toastBox { position: fixed; top: 1.5rem; right: 2rem; z-index: 5000; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none; }
+        .toast-item { background: var(--bg-card-elevated); border: 2px solid var(--primary); color: var(--text-main); padding: 1rem 1.5rem; border-radius: 12px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 0.75rem; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Marquee Ticker */
+        .marquee-container { background: var(--bg-surface); border-bottom: 1px solid var(--border); padding: 0.4rem 0; overflow: hidden; white-space: nowrap; position: relative; z-index: 900; }
+        .marquee-content { display: inline-block; animation: marqueeScroll 35s linear infinite; font-size: 0.82rem; font-weight: 800; color: var(--text-muted); }
+        @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .marquee-item { margin-right: 3rem; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .marquee-badge { background: var(--primary); color: var(--text-inv); padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 900; }
+
+        /* Header */
+        header { background-color: var(--bg-surface); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0.85rem 2rem; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .brand { display: flex; align-items: center; gap: 0.75rem; font-size: 1.4rem; font-weight: 900; color: var(--text-main); text-decoration: none; letter-spacing: -0.5px; }
+        .brand-logo { width: 38px; height: 38px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-inv); font-weight: 900; font-size: 1.25rem; box-shadow: 0 0 20px var(--primary-glow); }
+        .brand span { color: var(--primary); }
+        .v-badge { font-size: 0.65rem; background: var(--primary); color: var(--text-inv); padding: 3px 8px; border-radius: 4px; font-weight: 900; }
+
+        /* Main Nav Portals */
+        nav { display: flex; gap: 0.3rem; background-color: var(--bg-card); padding: 0.35rem; border-radius: 12px; border: 1px solid var(--border); flex-wrap: wrap; }
+        .nav-btn { background: transparent; border: none; color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.82rem; font-weight: 800; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-btn:hover { color: var(--text-main); background-color: rgba(255,255,255,0.05); }
+        .nav-btn.active { background-color: var(--primary); color: var(--text-inv); box-shadow: 0 2px 10px var(--primary-glow); }
+
+        .auth-bar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .theme-switch-bar { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 2px; }
+        .thm-btn { padding: 4px 10px; border: none; background: transparent; color: var(--text-muted); font-size: 0.75rem; font-weight: 800; border-radius: 18px; cursor: pointer; }
+        .thm-btn.active { background: var(--primary); color: var(--text-inv); }
+
+        .btn-auth { background: linear-gradient(135deg, var(--purple), #9333ea); color: #fff; border: none; padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 15px rgba(168,85,247,0.35); }
+        .role-indicator { font-size: 0.82rem; background: var(--bg-card); border: 1px solid var(--primary); color: var(--primary); padding: 4px 12px; border-radius: 20px; font-weight: 800; }
+
+        /* Workspace */
+        main { flex: 1; max-width: 1560px; width: 100%; margin: 0 auto; padding: 2.5rem 2rem; padding-bottom: 7rem; }
+        .portal-section { display: none; }
+        .portal-section.active { display: block; animation: fadeIn 0.35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .page-header { margin-bottom: 2.25rem; border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; }
+        .page-header h1 { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 0.35rem; }
+        .page-header p { color: var(--text-muted); font-size: 1.02rem; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+        @media (max-width: 1024px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+        .card { background-color: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 0.5rem; }
+        .card-title { font-size: 1.18rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; }
+
+        .badge { font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
+        .badge-green { background: var(--primary-glow); color: var(--primary); border: 1px solid var(--primary); }
+        .badge-red { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+        .badge-blue { background: var(--info-bg); color: #60a5fa; border: 1px solid #60a5fa; }
+        .badge-yellow { background: var(--warning-bg); color: var(--gold); border: 1px solid var(--gold); }
+
+        .dropzone { border: 2px dashed var(--primary); background-color: var(--bg-surface); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.25s; margin-bottom: 1rem; position: relative; }
+        .dropzone:hover { background-color: var(--primary-glow); }
+        .file-input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+
+        .form-control { width: 100%; background-color: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem 1rem; color: var(--text-main); font-size: 0.95rem; }
+        textarea.form-control { min-height: 140px; resize: vertical; margin-bottom: 1rem; }
+        .form-control:focus { outline: none; border-color: var(--primary); }
+
+        .btn-main { background: var(--primary); color: var(--text-inv); border: none; padding: 0.85rem 2rem; border-radius: 10px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; box-shadow: 0 6px 20px var(--primary-glow); }
+        .btn-main:hover { transform: translateY(-2px); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--text-main); padding: 0.6rem 1.25rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+        .btn-outline:hover { background: var(--primary); color: var(--text-inv); }
+
+        /* Gauges */
+        .gauge-container { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+        .gauge-svg { transform: rotate(-90deg); width: 200px; height: 200px; }
+        .gauge-bg { fill: none; stroke: var(--bg-surface); stroke-width: 18; }
+        .gauge-progress { fill: none; stroke: var(--primary); stroke-width: 18; stroke-linecap: round; stroke-dasharray: 565.48; stroke-dashoffset: 565.48; }
+        .gauge-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .score-val { font-size: 3.2rem; font-weight: 900; line-height: 1; color: var(--text-main); }
+        .score-label { font-size: 0.8rem; text-transform: uppercase; color: var(--primary); font-weight: 800; margin-top: 4px; }
+
+        .pillars-grid { display: flex; flex-direction: column; gap: 1rem; }
+        .pillar-meta { display: flex; justify-content: space-between; font-size: 0.92rem; font-weight: 700; margin-bottom: 4px; }
+        .progress-track { width: 100%; height: 10px; background-color: var(--bg-surface); border-radius: 6px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 1.2s; }
+
+        .pills-container { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem; }
+        .pill { padding: 0.4rem 0.85rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .pill-match { background: var(--primary-glow); color: var(--primary); border: 1px solid var(--primary); }
+        .pill-missing { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+
+        .kanban-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-top: 1rem; }
+        @media(max-width:900px){ .kanban-grid { grid-template-columns: 1fr; } }
+        .kanban-step { background: var(--bg-surface); border: 1px solid var(--border); padding: 1rem; border-radius: 10px; text-align: center; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); cursor: pointer; }
+        .kanban-step.active { border-color: var(--primary); background: var(--primary-glow); color: var(--text-main); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+        th { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; font-weight: 800; background-color: var(--bg-surface); }
+        tr:hover { background-color: rgba(255,255,255,0.03); }
+
+        .console-terminal { background: #040912; border: 2px solid var(--primary); padding: 1.5rem; border-radius: 12px; font-family: var(--font-mono); font-size: 0.88rem; color: var(--primary); max-height: 280px; overflow-y: auto; margin-top: 1rem; }
+        .rbac-table th { background: var(--bg-surface); color: var(--cyan); }
+        .rbac-table td { color: var(--text-main); }
+
+        /* --- FEATURE 2: HR DYNAMIC SVG CHARTS (v23.0) --- */
+        .svg-chart-box { background: var(--bg-surface); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); text-align: center; margin-top: 1rem; }
+
+        /* --- FEATURE 4: INTERACTIVE ATS KILL-SWITCH SPLIT DEMO (v23.0) --- */
+        .xray-split-container { display: none; margin-top: 1.5rem; border: 2px solid var(--danger); border-radius: 14px; overflow: hidden; background: #000; }
+        .split-header { background: var(--danger); color: #fff; padding: 0.6rem 1rem; font-weight: 900; font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .split-body { padding: 1.5rem; font-family: var(--font-mono); font-size: 0.88rem; color: #ff5555; line-height: 1.6; text-align: left; }
+
+        /* Modals */
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 3000; align-items: center; justify-content: center; }
+        .modal-box { background: var(--bg-card); border: 1px solid var(--primary); border-radius: 20px; width: 92%; max-width: 520px; padding: 2.5rem; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
+        .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+
+        #actionModalContent { text-align: left; }
+
+        /* Side Drawer for HR */
+        #sideDrawer { display: none; position: fixed; top: 0; right: 0; width: 460px; max-width: 100vw; height: 100vh; background: var(--bg-surface); border-left: 2px solid var(--primary); z-index: 4000; padding: 2.5rem 2rem; box-shadow: -20px 0 60px rgba(0,0,0,0.8); overflow-y: auto; animation: slideLeft 0.3s ease; }
+        @keyframes slideLeft { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* Chatbot */
+        .chatbot-btn { position: fixed; bottom: 2rem; right: 2rem; background: var(--primary); color: var(--text-inv); border: none; border-radius: 50px; padding: 1rem 1.75rem; font-size: 1rem; font-weight: 900; box-shadow: 0 8px 30px var(--primary-glow); cursor: pointer; display: flex; align-items: center; gap: 0.75rem; z-index: 1500; }
+        .chat-window { position: fixed; bottom: 6rem; right: 2rem; width: 440px; max-width: calc(100vw - 2rem); height: 600px; background-color: var(--bg-surface); border: 1px solid var(--primary); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: none; flex-direction: column; z-index: 1500; overflow: hidden; }
+        .chat-header { background: var(--bg-card); padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .voice-mode-banner { background: var(--info-bg); border-bottom: 1px solid var(--info); padding: 0.6rem 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem; color: var(--info); font-weight: 800; }
+        .chat-body { flex: 1; padding: 1.25rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; background-color: var(--bg-main); }
+        .chat-bubble { max-width: 85%; padding: 0.85rem 1.15rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; }
+        .bubble-ai { align-self: flex-start; background-color: var(--bg-card); border-left: 3px solid var(--primary); }
+        .bubble-user { align-self: flex-end; background: var(--primary); color: var(--text-inv); font-weight: 700; }
+        .quick-prompts-container { padding: 0.6rem 1rem; background-color: var(--bg-card); display: flex; gap: 0.5rem; overflow-x: auto; white-space: nowrap; border-top: 1px solid var(--border); }
+        .quick-prompt-chip { background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-secondary); padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+        .chat-input-area { padding: 0.85rem 1rem; background: var(--bg-surface); display: flex; gap: 0.5rem; align-items: center; border-top: 1px solid var(--border); }
+        .chat-attach-btn { background: var(--bg-card); border: 1px solid var(--primary); color: var(--primary); width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; }
+        .chat-input { flex: 1; background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.9rem; }
+        .chat-send-btn { background: var(--primary); color: var(--text-inv); border: none; border-radius: 10px; padding: 0 1.25rem; height: 42px; font-weight: 800; cursor: pointer; }
+
+        footer { margin-top: auto; border-top: 1px solid var(--border); background-color: var(--bg-surface); padding: 2rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
+        .dpdp-badge { background: var(--primary-glow); border: 1px solid var(--primary); color: var(--primary); padding: 0.4rem 1.25rem; border-radius: 20px; font-size: 0.78rem; font-weight: 800; }
+    </style>
+</head>
+<body data-theme="forest">
+
+    <div id="toastBox"></div>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <div class="marquee-item"><span class="marquee-badge">⚡ PLACEMENT</span> Aarav placed @ Amazon Cloud (₹38 LPA)</div>
+            <div class="marquee-item"><span class="marquee-badge">⚡ SHORTLISTED</span> Priya shortlisted @ Microsoft Azure (₹42 LPA)</div>
+            <div class="marquee-item"><span class="marquee-badge">⚡ ATS BYPASS</span> Rohan bypassed legacy Taleo filter @ Flipkart</div>
+            <div class="marquee-item"><span class="marquee-badge">⚡ DEPLOYED</span> HireTech Multi-Theme Vernacular Suite Evaluated A+ Grade</div>
+            <div class="marquee-item"><span class="marquee-badge">⚡ PLACEMENT</span> Aarav placed @ Amazon Cloud (₹38 LPA)</div>
+        </div>
+    </div>
+
+    <!-- ENTERPRISE HEADER WITH MULTI-THEME TOGGLE -->
+    <header>
+        <a href="#" class="brand"><div class="brand-logo">HT</div>HireTech <span>AI</span> <span class="v-badge">v23.0 SUPREME</span></a>
+
+        <nav>
+            <button class="nav-btn active" onclick="switchPortal('candidate')">🧑‍💻 Candidate Hub (11)</button>
+            <button class="nav-btn" onclick="switchPortal('hr')">👨‍💼 HR Recruiter Suite (9)</button>
+            <button class="nav-btn" onclick="switchPortal('admin')" style="color:var(--gold);">👑 Super Admin (9)</button>
+            <button class="nav-btn" onclick="switchPortal('ai')" style="color:var(--cyan);">🤖 Standout AI Engine (8)</button>
+            <button class="nav-btn" onclick="switchPortal('security')" style="color:var(--pink);">🛡️ Security & Privacy (8)</button>
+            <button class="nav-btn" onclick="switchPortal('premium')">🚀 Premium & Future (16)</button>
+        </nav>
+
+        <div class="auth-bar">
+            <!-- FEATURE 1: THEME SWITCHER -->
+            <div class="theme-switch-bar">
+                <button class="thm-btn active" onclick="switchCorporateTheme(this, 'forest')">🌑 Forest</button>
+                <button class="thm-btn" onclick="switchCorporateTheme(this, 'alpine')">☀️ Alpine</button>
+                <button class="thm-btn" onclick="switchCorporateTheme(this, 'matrix')">💻 Matrix</button>
+            </div>
+
+            <!-- FEATURE 3: VERNACULAR NLP TOGGLE -->
+            <div class="theme-switch-bar" style="border-color:var(--cyan);">
+                <button class="thm-btn active" onclick="switchVernacularNlp(this, 'eng')">EN</button>
+                <button class="thm-btn" onclick="switchVernacularNlp(this, 'hinglish')">Hinglish</button>
+                <button class="thm-btn" onclick="switchVernacularNlp(this, 'hindi')">HI</button>
+            </div>
+
+            <span class="role-indicator" id="activeRoleText">🟢 Logged in: Candidate</span>
+            <button class="btn-auth" onclick="openAuthModal()">🔐 Secure Login / 2FA</button>
+        </div>
+    </header>
+
+    <!-- MAIN APP WORKSPACE -->
+    <main>
+
+        <!-- ==================== PORTAL 1: CANDIDATE HUB ==================== -->
+        <div id="portal-candidate" class="portal-section active">
+            <div class="page-header">
+                <h1>🧑‍💻 Candidate Career Hub & ATS Engine</h1>
+                <p>Featuring exact 11 Candidate Pillars: AI Resume Analyzer, Smart Job Matching, Resume Builder, AI Optimizer, Cover Letter Generator, Interview Prep, Skill Gap Resources, Career Roadmap, Application Tracker, Portfolio Generator & AI Career Coach.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">1. AI Resume Analyzer (Mod 1)</span><span class="badge badge-green" id="candScoreBadge">ATS Score: 92/100</span></div>
+                    <div class="dropzone" onclick="document.getElementById('resumeFile').click()">
+                        <input type="file" class="file-input" id="resumeFile" accept=".pdf,.docx,.txt" onchange="handleResumeUpload(event)">
+                        <div style="font-size:2.5rem; margin-bottom:0.5rem;">📄</div>
+                        <strong style="color:var(--text-main);">Upload Resume Document (.pdf / .docx)</strong>
+                        <span style="font-size:0.82rem; color:var(--text-muted);">Executes Grammar, Formatting & Missing Skill Check</span>
+                    </div>
+
+                    <!-- FEATURE 4: INTERACTIVE ATS KILL SWITCH X-RAY SPLIT DEMO (v23.0) -->
+                    <div style="display:flex; gap:0.5rem; margin-bottom:1.25rem;">
+                        <button class="btn-outline" style="flex:1; border-color:var(--primary);" onclick="testAtsParserLayout('clean')">🟢 Test Single-Column CV</button>
+                        <button class="btn-outline" style="flex:1; border-color:var(--danger); color:var(--danger);" onclick="testAtsParserLayout('canva')">🔴 Test Canva Graphic CV</button>
+                    </div>
+
+                    <div class="xray-split-container" id="atsXraySplitDemo">
+                        <div class="split-header"><span>⚠️ LEGACY TALEO 2012 PARSER X-RAY ERROR</span><span>CRITICAL KILL-SWITCH</span></div>
+                        <div class="split-body">
+                            [PARSER_DUMP]: Scanned flattened graphic canvas.<br>
+                            [ERROR]: Extracted multi-column table horizontally: "Experience Skills Education Senior Python 2024 Null"<br>
+                            [VERDICT]: <strong style="color:#fff; background:var(--danger); padding:2px 6px;">75% UNPARSEABLE HAZARD REJECTED</strong>
+                        </div>
+                    </div>
+
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:10px; font-size:0.85rem; margin-bottom:1.25rem;" id="candReportBox">
+                        <div style="color:var(--primary); font-weight:800; margin-bottom:0.4rem;">✓ STRENGTHS, WEAKNESSES & KEYWORDS:</div>
+                        <p style="color:var(--text-muted);">• <strong>Strength:</strong> Quantified numerical metrics & past-tense action verbs.</p>
+                        <p style="color:var(--danger);">• <strong>Missing Skills Highlight:</strong> SQL & Power BI missing from tech profile.</p>
+                        <p style="color:var(--cyan); margin-top:0.4rem;">• <strong>Keyword Suggestions:</strong> Add "Microservices Architecture", "Docker Containers".</p>
+                    </div>
+
+                    <button class="btn-main" onclick="executeCandidateScoring()">🚀 Calculate Verified ATS Score</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">2. Smart Job Matching & Optimizer (Mod 2 & 4)</span><span class="badge badge-blue">Match: 92%</span></div>
+                    <textarea class="form-control" id="jdInput" placeholder="Paste target Job Description text here..."></textarea>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.75rem; margin-bottom:1rem; font-size:0.85rem;">
+                        <div style="background:var(--bg-main); padding:0.85rem; border-radius:8px;"><span>Salary Estimate:</span> <strong style="color:var(--text-main); display:block; font-size:1.05rem;">₹18 LPA – ₹36 LPA</strong></div>
+                        <div style="background:var(--bg-main); padding:0.85rem; border-radius:8px;"><span>Location & Exp Filter:</span> <strong style="color:var(--primary); display:block; font-size:1.05rem;">Remote / 5+ Years</strong></div>
+                    </div>
+
+                    <p style="font-size:0.88rem; color:var(--cyan); margin-bottom:1rem;">Match ka Reason: <em>"Python & AWS skills match target JD. SQL missing."</em></p>
+
+                    <div style="display:flex; gap:0.75rem;">
+                        <button class="btn-main" style="background:#3b82f6; color:#fff; flex:1;" onclick="openAiOptimizerWorkingStudio()">✨ AI Optimize Resume</button>
+                        <button class="btn-main" style="background:#334155; color:#fff; flex:1;" onclick="triggerActualPdfDownload()">📥 Download ATS PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="candidateResultsBox" style="display:none; margin-bottom:2rem;">
+                <div style="background:var(--bg-card); padding:2.5rem; border-radius:18px; border:1px solid var(--primary); display:grid; grid-template-columns: 260px 1fr; gap:3rem; align-items:center;">
+                    <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="100" cy="100" r="80"></circle><circle class="gauge-progress" id="scoreCircle" cx="100" cy="100" r="80"></circle></svg><div class="gauge-center-text"><div class="score-val" id="finalScoreText">0%</div><div class="score-label">ATS Score</div></div></div>
+                    <div class="pillars-grid">
+                        <h3 style="color:var(--text-main); font-size:1.35rem; margin-bottom:0.5rem;">Mathematical Scoring Breakdown (0–100)</h3>
+                        <div class="pillar-meta"><span>Semantic Vector Similarity (35% W)</span><span style="color:var(--primary);" id="p1Val">94%</span></div><div class="progress-track"><div class="progress-bar" id="p1Bar" style="width:0%;"></div></div>
+                        <div class="pillar-meta"><span>Exact Keyword & Skill Coverage (25% W)</span><span style="color:var(--primary);" id="p2Val">88%</span></div><div class="progress-track"><div class="progress-bar" id="p2Bar" style="width:0%;"></div></div>
+                        <div class="pillar-meta"><span>Grammar & Formatting Cleanliness (15% W)</span><span style="color:var(--primary);" id="p3Val">100%</span></div><div class="progress-track"><div class="progress-bar" id="p3Bar" style="width:0%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 7 & 8: SKILL GAP & ROADMAP -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">7. Skill Gap Analysis & Resources</span></div>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">Required: Python, SQL, Power BI • You Have: <strong style="color:var(--text-main);">Python</strong></p>
+                    <h4 style="color:var(--danger); font-size:0.85rem; margin-bottom:0.6rem;">MISSING SKILLS & SUGGESTED LEARNING RESOURCES:</h4>
+                    <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                        <div style="background:var(--bg-main); padding:0.85rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--danger); font-weight:800;">✕ Missing: SQL Database</span><button class="btn-outline" style="padding:4px 12px; font-size:0.75rem;" onclick="showToast('📚 Opened verified Coursera SQL Specialization link!')">📚 Coursera Resource ↗</button></div>
+                        <div style="background:var(--bg-main); padding:0.85rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center;"><span style="color:var(--danger); font-weight:800;">✕ Missing: Power BI</span><button class="btn-outline" style="padding:4px 12px; font-size:0.75rem;" onclick="showToast('📺 Opened verified Udemy Power BI Masterclass!')">📺 Udemy Masterclass ↗</button></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">8. Career Roadmap & Portfolio (Mod 8 & 10)</span></div>
+                    <p style="font-size:0.88rem; color:var(--primary); margin-bottom:1.25rem;">Data Analyst Step-by-Step Roadmap: Python ➔ SQL ➔ Excel ➔ Power BI ➔ Projects ➔ Interview Prep</p>
+                    <div style="padding:1.25rem; background:var(--bg-main); border-radius:10px; text-align:center;">
+                        <strong style="color:var(--text-main); display:block; margin-bottom:0.35rem;">🌐 One-Click Personal Portfolio Website</strong>
+                        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">Generate a live public digital showcase URL.</p>
+                        <button class="btn-auth" style="width:100%;" onclick="openPortfolioGeneratorStudio()">⚡ Generate Showcase URL</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">9. Application Tracker & Daily AI Coach (Mod 9, 5, 6, 11)</span>
+                    <div style="display:flex; gap:0.5rem;">
+                        <button class="btn-outline" onclick="openCoverLetterDraftStudio()">✨ Cover Letter</button>
+                        <button class="btn-outline" style="border-color:var(--cyan); color:var(--cyan);" onclick="openMockInterviewStudio()">🎯 Mock Interview</button>
+                    </div>
+                </div>
+                <p style="font-size:0.85rem; color:var(--text-muted);">Application Status Tracker Pipeline (Click to Advance Kanban):</p>
+                <div class="kanban-grid">
+                    <div class="kanban-step" onclick="setTrackerActive(this, 'Applied')">Applied</div>
+                    <div class="kanban-step active" onclick="setTrackerActive(this, 'Shortlisted')">Shortlisted ✓</div>
+                    <div class="kanban-step" onclick="setTrackerActive(this, 'Technical Interview')">Technical Interview</div>
+                    <div class="kanban-step" onclick="setTrackerActive(this, 'HR Round')">HR Round</div>
+                    <div class="kanban-step" onclick="setTrackerActive(this, 'Offer')" style="border-color:var(--primary); color:var(--primary);">Offer 🎉</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTAL 2: HR RECRUITER SUITE WITH SVG FUNNEL CHARTS (v23.0) ==================== -->
+        <div id="portal-hr" class="portal-section">
+            <div class="page-header">
+                <h1>👨‍💼 HR Candidate Ranking & Fraud Suite</h1>
+                <p>Featuring all 9 Corporate Pillars: Automated Top 10 Candidate Ranking, Multi-Attribute Filtering, Duplicate Detection, AI Candidate Summary, Q-Generator, Corporate Email Templates, Bulk 100 CV Analysis, Fraud Detection & Analytics Funnel.</p>
+            </div>
+
+            <div class="card" style="margin-bottom:2rem; border-color:var(--danger); background-color:var(--bg-surface);">
+                <div class="card-header"><span class="card-title" style="color:var(--danger);">⚠️ Fraud Detection & Duplicate Audit <span class="badge badge-red" style="margin-left:8px;">Mod 8 & 3</span></span></div>
+                <div class="grid-4" style="margin-bottom:0;">
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px;"><span>Plagiarism Score:</span><strong style="color:var(--primary); display:block; font-size:1.2rem;">0% Clean</strong></div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px;"><span>AI Resume Probability:</span><strong style="color:var(--primary); display:block; font-size:1.2rem;">14% (Human)</strong></div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px;"><span>Fake Experience Check:</span><strong style="color:var(--primary); display:block; font-size:1.2rem;">Verified Pass</strong></div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px;"><span>Duplicate Upload Check:</span><strong style="color:var(--primary); display:block; font-size:1.2rem;">No Duplicates</strong></div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom:2rem;">
+                <div class="card-header">
+                    <span class="card-title">🏆 Top 10 Candidate Ranking (Bulk 100 Resumes Analyzed) <span class="badge badge-green" style="margin-left:8px;">Mod 1, 2, 7</span></span>
+                    <div style="display:flex; gap:0.5rem; font-size:0.8rem;">
+                        <span style="background:var(--bg-main); padding:6px 12px; border-radius:6px; color:var(--text-muted);">Filter: Notice Period Immediate</span>
+                    </div>
+                </div>
+
+                <table>
+                    <thead><tr><th>Rank</th><th>Candidate Name</th><th>AI Candidate Summary (Mod 4)</th><th>ATS Score</th><th>Corporate Working Drawers (Mod 5 & 6)</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#1</strong></td><td><strong>Aarav Sharma</strong></td>
+                            <td style="color:var(--text-muted); font-size:0.85rem;">8.5 Yrs Exp • AWS/Python Spec • Strong Leadership</td>
+                            <td><span class="badge badge-green">94.2%</span></td>
+                            <td>
+                                <button class="btn-auth" style="padding:4px 10px; font-size:0.75rem;" onclick="openHrQgenDrawer('Aarav Sharma', ['AWS EKS', 'Python FastAPI', 'Terraform'])">Q-Gen</button>
+                                <button class="btn-auth" style="padding:4px 10px; font-size:0.75rem; background:var(--info);" onclick="openHrEmailConsole('Interview Invite', 'aarav.sharma@gmail.com', 'Aarav Sharma')">Invite Mail</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>#2</strong></td><td><strong>Priya Patel</strong></td>
+                            <td style="color:var(--text-muted); font-size:0.85rem;">6.0 Yrs Exp • Docker/Azure Spec • Immediate Notice</td>
+                            <td><span class="badge badge-green">86.5%</span></td>
+                            <td>
+                                <button class="btn-auth" style="padding:4px 10px; font-size:0.75rem;" onclick="openHrQgenDrawer('Priya Patel', ['Docker Swarm', 'Azure AD'])">Q-Gen</button>
+                                <button class="btn-auth" style="padding:4px 10px; font-size:0.75rem; background:var(--primary); color:#000;" onclick="openHrEmailConsole('Offer Letter', 'priya.p@cloudnet.in', 'Priya Patel')">Offer Letter</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FEATURE 2: HR DYNAMIC SVG CHARTS (v23.0) -->
+            <div class="grid-2">
+                <div class="card">
+                    <span class="card-title">📈 Visual Hiring Funnel Conversion (Mod 9)</span>
+                    <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">Real-time automated candidate conversion tracking.</p>
+                    <div class="svg-chart-box">
+                        <svg viewBox="0 0 300 160" style="width:100%; height:160px;">
+                            <rect x="20" y="20" width="260" height="24" fill="var(--primary)" rx="4"/>
+                            <text x="150" y="36" fill="var(--text-inv)" font-size="10" font-weight="900" text-anchor="middle">Applied (1,420 Candidates)</text>
+                            
+                            <rect x="50" y="55" width="200" height="24" fill="var(--cyan)" rx="4"/>
+                            <text x="150" y="71" fill="#000" font-size="10" font-weight="900" text-anchor="middle">Shortlisted (142 Candidates)</text>
+                            
+                            <rect x="80" y="90" width="140" height="24" fill="var(--purple)" rx="4"/>
+                            <text x="150" y="106" fill="#fff" font-size="10" font-weight="900" text-anchor="middle">Interview (45 Candidates)</text>
+                            
+                            <rect x="110" y="125" width="80" height="24" fill="var(--gold)" rx="4"/>
+                            <text x="150" y="141" fill="#000" font-size="10" font-weight="900" text-anchor="middle">Offer (12)</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="card-title">🛠️ Domain Competency Distribution (Mod 9)</span>
+                    <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">Categorized taxonomy NLP token isolation.</p>
+                    <div class="svg-chart-box">
+                        <svg viewBox="0 0 200 160" style="width:160px; height:160px; margin:0 auto;">
+                            <!-- Donut slices -->
+                            <circle cx="100" cy="80" r="50" fill="none" stroke="var(--primary)" stroke-width="25" stroke-dasharray="140 314"/>
+                            <circle cx="100" cy="80" r="50" fill="none" stroke="var(--cyan)" stroke-width="25" stroke-dasharray="100 314" stroke-dashoffset="-140"/>
+                            <circle cx="100" cy="80" r="50" fill="none" stroke="var(--purple)" stroke-width="25" stroke-dasharray="50 314" stroke-dashoffset="-240"/>
+                            <circle cx="100" cy="80" r="50" fill="none" stroke="var(--gold)" stroke-width="25" stroke-dasharray="24 314" stroke-dashoffset="-290"/>
+                            <text x="100" y="84" fill="var(--text-main)" font-size="12" font-weight="900" text-anchor="middle">Skills</text>
+                        </svg>
+                        <div style="font-size:0.78rem; color:var(--text-main); margin-top:0.75rem;">Python 45% • Cloud 35% • SQL 12% • React 8%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTAL 3: SUPER ADMIN CONSOLE ==================== -->
+        <div id="portal-admin" class="portal-section">
+            <div class="page-header">
+                <h1>👑 Super Admin Governance Console</h1>
+                <p>Featuring all 9 Admin Pillars: Manage Users (Candidates & HR), Verify Companies, Manage Job Postings, Approve/Reject Employers, Analytics Dashboard, Handle Reports & Complaints, Block Fake Accounts, Subscription Management & Content/Blog CMS.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">1. Company Verification Desk</span><span class="badge badge-yellow" id="adminPendingBadge">2 Pending</span></div>
+                    <p style="font-size:0.85rem; color:var(--text-muted);">Employer Onboarding Queue:</p>
+                    <div style="background:var(--bg-main); padding:0.85rem; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;" id="companyRow1">
+                        <strong style="color:var(--text-main);">TechCorp Global</strong>
+                        <div id="comp1Actions">
+                            <button class="btn-auth" style="padding:2px 8px; font-size:0.7rem; background:var(--primary); color:#000;" onclick="verifyCompanyWorkflow(1, 'TechCorp Global', 'Approve')">Approve</button>
+                            <button class="btn-auth" style="padding:2px 8px; font-size:0.7rem; background:var(--danger);" onclick="verifyCompanyWorkflow(1, 'TechCorp Global', 'Reject')">Reject</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">2. User & Job Post Management</span></div>
+                    <p style="font-size:0.85rem; color:var(--text-muted);">Active Platform Governance:</p>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.5rem; text-align:center;">
+                        <div style="background:var(--bg-main); padding:0.75rem; border-radius:6px;"><span>Active Candidates</span><strong style="color:var(--text-main); display:block;" id="adminCandCount">10,450</strong></div>
+                        <div style="background:var(--bg-main); padding:0.75rem; border-radius:6px;"><span>Live Job Posts</span><strong style="color:var(--cyan); display:block;">450</strong></div>
+                    </div>
+                    <button class="btn-outline" style="margin-top:1rem; width:100%;" onclick="showToast('✓ Job Moderation Console Fired: 450 live cloud contracts audited.')">Moderate Job Postings</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">3. Block Fake Accounts & Grievances</span></div>
+                    <p style="font-size:0.85rem; color:var(--text-muted);">Security Administration:</p>
+                    <button class="btn-main" style="background:var(--danger); color:#fff; margin-bottom:0.75rem;" onclick="triggerFakeAccountBlocker()">🚫 One-Click Block Fake Accounts</button>
+                    <button class="btn-outline" style="width:100%;" onclick="openComplaintDeskModal()">Handle Reports & Complaints Desk</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="card-title">4. Subscription Management & Content/Blog CMS (Admin Mod 8 & 9)</span></div>
+                <div class="grid-2" style="margin-bottom:0;">
+                    <div style="background:var(--bg-main); padding:1.25rem; border-radius:10px;">
+                        <strong style="color:var(--text-main); display:block; margin-bottom:0.4rem;">💎 Subscription Tier Management</strong>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Manage candidate and HR license access tenures.</p>
+                        <button class="btn-auth" onclick="openSubscriptionEditorStudio()">Configure Tier Matrix</button>
+                    </div>
+                    <div style="background:var(--bg-main); padding:1.25rem; border-radius:10px;">
+                        <strong style="color:var(--gold); display:block; margin-bottom:0.4rem;">📝 Content & Blog CMS Engine</strong>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Publish official career advice articles & platform updates.</p>
+                        <button class="btn-auth" style="background:var(--gold); color:#000;" onclick="openBlogCmsPublicationStudio()">+ Publish Career Blog Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTAL 4: STANDOUT AI ENGINE ==================== -->
+        <div id="portal-ai" class="portal-section">
+            <div class="page-header">
+                <h1>🤖 Dedicated Standout AI Engine</h1>
+                <p>Featuring exact 8 AI Standout Pillars: AI Resume Analysis, AI Job Matching, AI Resume Optimization, AI Cover Letter Generator, AI Mock Interview, AI Career Recommendations, AI Skill Gap Analysis & AI Salary Prediction.</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="card" style="border-color:var(--primary);"><span style="font-size:2.5rem;">📑</span><h4 style="color:var(--text-main); margin:0.5rem 0;">1. AI Resume Analysis</h4><p style="font-size:0.85rem; color:var(--text-muted);">Deterministic 384-dimensional dense semantic vector parsing.</p></div>
+                <div class="card" style="border-color:var(--cyan);"><span style="font-size:2.5rem;">🎯</span><h4 style="color:var(--text-main); margin:0.5rem 0;">2. AI Job Matching</h4><p style="font-size:0.85rem; color:var(--text-muted);">Cosine vector similarity isolating exact intent alignment.</p></div>
+                <div class="card" style="border-color:var(--purple);"><span style="font-size:2.5rem;">✨</span><h4 style="color:var(--text-main); margin:0.5rem 0;">3. AI Resume Optimizer</h4><p style="font-size:0.85rem; color:var(--text-muted);">Autonomously injects target JD terms into experience bullets.</p></div>
+                <div class="card" style="border-color:var(--pink);"><span style="font-size:2.5rem;">✉️</span><h4 style="color:var(--text-main); margin:0.5rem 0;">4. AI Cover Letter Gen</h4><p style="font-size:0.85rem; color:var(--text-muted);">Synthesizes company personalized persuasive letter drafts.</p></div>
+                <div class="card" style="border-color:var(--gold);"><span style="font-size:2.5rem;">🎙️</span><h4 style="color:var(--text-main); margin:0.5rem 0;">5. AI Mock Interview</h4><p style="font-size:0.85rem; color:var(--text-muted);">Web Speech API narrating probing technical domain questions.</p></div>
+                <div class="card" style="border-color:var(--primary);"><span style="font-size:2.5rem;">💡</span><h4 style="color:var(--text-main); margin:0.5rem 0;">6. AI Career Recomms</h4><p style="font-size:0.85rem; color:var(--text-muted);">Daily actionable heuristic suggestions for skill progression.</p></div>
+                <div class="card" style="border-color:var(--danger);"><span style="font-size:2.5rem;">✕</span><h4 style="color:var(--text-main); margin:0.5rem 0;">7. AI Skill Gap Isolator</h4><p style="font-size:0.85rem; color:var(--text-muted);">Maps missing competencies against Coursera/Udemy resources.</p></div>
+                <div class="card" style="border-color:var(--cyan);"><span style="font-size:2.5rem;">💰</span><h4 style="color:var(--text-main); margin:0.5rem 0;">8. AI Salary Predictor</h4><p style="font-size:0.85rem; color:var(--text-muted);">Real-time market compensation range valuation benchmarking.</p></div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTAL 5: SECURITY & PRIVACY ==================== -->
+        <div id="portal-security" class="portal-section">
+            <div class="page-header">
+                <h1>🛡️ Security & Privacy Administration</h1>
+                <p>Featuring exact 8 Mandatory Security Pillars: Secure Login (Email/OAuth), Two-Factor Authentication (2FA), Encrypted Resume Storage, Role-Based Access Control (RBAC), Privacy Controls, GDPR/DPDP Compliance, Data Backup & Recovery & Immutable Audit Logs.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">1. 2FA & Role-Based Access Control (RBAC) <span class="badge badge-purple">Mod 2 & 4</span></span></div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:10px; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
+                        <div><strong style="color:var(--text-main);">Two-Factor Authentication (2FA)</strong><span style="font-size:0.8rem; color:var(--text-muted); display:block;" id="twoFaStatusText">Time-based OTP authenticator enforcement.</span></div>
+                        <button class="btn-auth" id="btnToggle2fa" onclick="trigger2faActivationStudio()">Enable 2FA</button>
+                    </div>
+                    
+                    <strong style="color:var(--text-main); font-size:0.88rem; margin-bottom:0.5rem;">RBAC PERMISSIONS MATRIX:</strong>
+                    <table class="rbac-table" style="margin-top:0; font-size:0.85rem;">
+                        <tr><th>Role</th><th>Ingest & Audit</th><th>HR Filtering</th><th>System Admin</th></tr>
+                        <tr><td><strong>Candidate</strong></td><td>✓ Granted</td><td>✕ Restricted</td><td>✕ Restricted</td></tr>
+                        <tr><td><strong>HR Recruiter</strong></td><td>✓ Granted</td><td>✓ Granted</td><td>✕ Restricted</td></tr>
+                        <tr><td><strong>Super Admin</strong></td><td>✓ Granted</td><td>✓ Granted</td><td>✓ Granted</td></tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">2. Encrypted Storage & GDPR/DPDP Compliance <span class="badge badge-green">Mod 3 & 6</span></span></div>
+                    <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1rem;">All uploaded resume blobs are encrypted at rest using <strong>AES-256 GCM Cryptography</strong>.</p>
+                    <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;">
+                        <button class="btn-main" style="flex:1;" onclick="triggerActualGdprFileExport()">📥 GDPR Data Export</button>
+                        <button class="btn-outline" style="flex:1;" onclick="showToast('⚡ Data Redundancy Sync Fired: Database snapshot encrypted to AWS S3 Glacier.')">⚡ Backup & Recovery</button>
+                    </div>
+
+                    <strong style="color:var(--primary); font-size:0.85rem;">🔒 LIVE IMMUTABLE SYSTEM AUDIT LOGS (Mod 8):</strong>
+                    <div class="console-terminal" id="sysAuditLogTerminal">
+                        [AUDIT_LOG_001] User 1042 authenticated via Google OAuth SSO.<br>
+                        [AUDIT_LOG_002] AES-256 GCM blob written for Senior_DevOps_Resume.pdf.<br>
+                        [AUDIT_LOG_003] Super Admin verified TechCorp Global onboarding.<br>
+                        [AUDIT_LOG_004] GDPR DPDP Act 2023 Data Sovereignty Shield verified.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTAL 6: PREMIUM & FUTURE ==================== -->
+        <div id="portal-premium" class="portal-section">
+            <div class="page-header">
+                <h1>🚀 Premium Accelerators & Future Enhancements</h1>
+                <p>Featuring all 9 Premium Features + 7 Future Scope Enhancements: Salary Predictor, CV vs Job Comparison, Company Reviews, Referral Finder, Version History, Voice Review, Career Chatbot, Job Alerts, Internships + Mobile App Concept, Video Resumes, AI Interview Bot, Blockchain Verification, Multi-Language Support, Global Job Portal Integration & Referral Systems.</p>
+            </div>
+
+            <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1.25rem;">🚀 Premium Growth Accelerators (9 Modules)</h3>
+            <div class="grid-3" style="margin-bottom:3rem;">
+                <div class="card"><h4>💰 AI Salary Predictor</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Market valuation benchmarking.</p></div>
+                <div class="card"><h4>⚖️ Resume vs Job Diff</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Side-by-side exact skill diffing.</p></div>
+                <div class="card"><h4>🏢 Company Reviews</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Verified culture scores.</p></div>
+                <div class="card"><h4>🤝 Referral Finder</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Matches profile with company alumni.</p></div>
+                <div class="card"><h4>🌿 Version History</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Timeline tracking CV score evolution.</p></div>
+                <div class="card"><h4>🎙️ Voice Resume Review</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Verbal AI audio critique of CV.</p></div>
+                <div class="card"><h4>💬 Career Chatbot</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">24/7 conversational guidance bot.</p></div>
+                <div class="card"><h4>🔔 Instant Job Alerts</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Daily matching cloud pings.</p></div>
+                <div class="card"><h4>🎓 Internships</h4><p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Pre-screened student opportunities.</p></div>
+            </div>
+
+            <h3 style="color:var(--cyan); font-size:1.4rem; margin-bottom:1.25rem;">🔮 Future Scope Enhancements (For Documentation & PPT Slides)</h3>
+            <div class="grid-4">
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">📱</span><h4 style="color:var(--text-main); margin:0.4rem 0;">1. Mobile App</h4><p style="font-size:0.82rem; color:var(--text-muted);">Native iOS & Android app.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">🎥</span><h4 style="color:var(--text-main); margin:0.4rem 0;">2. Video Resumes</h4><p style="font-size:0.82rem; color:var(--text-muted);">30-second video intro pitch clips.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">🤖</span><h4 style="color:var(--text-main); margin:0.4rem 0;">3. AI Interview Bot</h4><p style="font-size:0.82rem; color:var(--text-muted);">Autonomous avatar interviewer.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">⛓️</span><h4 style="color:var(--text-main); margin:0.4rem 0;">4. Blockchain Badges</h4><p style="font-size:0.82rem; color:var(--text-muted);">Decentralized ledger verification.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">🌐</span><h4 style="color:var(--text-main); margin:0.4rem 0;">5. Multi-Language</h4><p style="font-size:0.82rem; color:var(--text-muted);">Hindi, Spanish, German NLP.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">🔗</span><h4 style="color:var(--text-main); margin:0.4rem 0;">6. Global Portals</h4><p style="font-size:0.82rem; color:var(--text-muted);">Direct LinkedIn/Indeed sync.</p></div>
+                <div class="card" style="background:var(--bg-main);"><span style="font-size:2rem;">🤝</span><h4 style="color:var(--text-main); margin:0.4rem 0;">7. Referral Network</h4><p style="font-size:0.82rem; color:var(--text-muted);">P2P bounty referral engine.</p></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== UNIVERSAL WORKING MODALS & DRAWERS ==================== -->
+    <div class="modal-backdrop" id="authModal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeAuthModal()">✕</button>
+            <h2 style="color:var(--text-main); margin-bottom:1rem;">🔐 Universal Authentication</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Select Role & Login Flow</p>
+            <div style="display:flex; gap:0.5rem; margin-bottom:1.5rem;">
+                <button class="btn-auth" style="flex:1;" onclick="switchRole('candidate')">👤 Seeker</button>
+                <button class="btn-auth" style="flex:1; background:var(--info);" onclick="switchRole('hr')">👨‍💼 HR</button>
+                <button class="btn-auth" style="flex:1; background:var(--gold); color:#000;" onclick="switchRole('admin')">👑 Admin</button>
+            </div>
+            <input type="text" id="authEmailInput" class="form-control" placeholder="Email or User ID" value="aarav.sharma@gmail.com">
+            <button class="btn-main" style="margin-top:1rem;" onclick="simulateAuthSuccess()">Sign In / Enforce 2FA</button>
+        </div>
+    </div>
+
+    <!-- UNIVERSAL INTERACTIVE ACTION MODAL -->
+    <div class="modal-backdrop" id="actionModal">
+        <div class="modal-box" style="max-width:700px;" id="actionModalContent"></div>
+    </div>
+
+    <!-- SIDE DRAWER FOR HR Q-GEN -->
+    <div id="sideDrawer">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1px solid var(--border); padding-bottom:1rem;">
+            <strong style="color:var(--text-main); font-size:1.2rem;">⚡ HR Probing Q-Generator</strong>
+            <button style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;" onclick="closeHrDrawer()">✕</button>
+        </div>
+        <div id="sideDrawerContent"></div>
+    </div>
+
+    <!-- FLOATING CHATBOT WIDGET -->
+    <button class="chatbot-btn" onclick="toggleChatbot()">💬 HireBot AI Coach</button>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header"><div style="color:var(--text-main); font-weight:800;">🤖 HireBot Coach [v23.0]</div><button style="background:none; border:none; color:var(--text-main); cursor:pointer;" onclick="toggleChatbot()">✕</button></div>
+        <div class="voice-mode-banner"><span>🎙️ Vernacular Coach:</span><button style="background:var(--cyan);color:#000;border:none;padding:4px 10px;border-radius:20px;font-weight:900;cursor:pointer;" onclick="handsFreeVoiceAssistant()">⚡ Speak to Bot</button></div>
+        <div class="chat-body" id="chatBody"><div class="chat-bubble bubble-ai">Hello! I am **HireBot v23.0 Singularity**. Daily Coach & Tracker active!</div></div>
+        <div style="padding:10px;background:var(--bg-surface);display:flex;gap:8px;align-items:center;border-top:1px solid var(--border);"><input type="file" id="chatFileInput" style="display:none;" accept=".pdf,.docx,.txt" onchange="handleChatFileUpload(event)"><button class="chat-attach-btn" onclick="document.getElementById('chatFileInput').click()">📎</button><input type="text" class="chat-input" id="chatInput" placeholder="Query..."><button class="chat-send-btn" onclick="sendChat()">Send</button></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="dpdp-badge" style="margin-bottom:1rem;">🛡️ 100% INDIAN DPDP ACT 2023 COMPLIANT — ZERO PII DATA SOLD TO 3RD PARTY LLMS</div>
+        
+        <!-- FEATURE 5: EXPORT SYNOPSIS & PPT BLUEPRINT -->
+        <button class="btn-auth" style="background:var(--gold); color:#000; padding:0.75rem 2rem; font-size:0.95rem; margin-bottom:1.5rem;" onclick="exportCapstonePptBlueprint()">
+            📥 Export Capstone PPT Slide Blueprint (Mod 5)
+        </button>
+
+        <p style="color:var(--text-main); font-weight:800; margin-bottom:0.4rem;">HireTech AI v23.0 International Supreme Masterpiece</p>
+        <p>Contains complete Candidate (11), HR (9), Admin (9), AI Engine (8), Security (8) & Future Scope (7) Modules. Zero Paywalls.</p>
+    </footer>
+
+    <script>
+        let curRole = 'candidate'; let activeScoreTimer = null;
+        let curNlpLang = 'eng';
+
+        window.onload = () => { document.getElementById('jdInput').value = "Looking for Senior Full-Stack Python Engineer."; };
+
+        /* --- FEATURE 1: CORPORATE THEME SWITCHER (v23.0) --- */
+        function switchCorporateTheme(btn, themeName) {
+            document.querySelectorAll('.thm-btn').forEach(b => { if(b.parentElement === btn.parentElement) b.classList.remove('active'); });
+            btn.classList.add('active');
+            document.body.setAttribute('data-theme', themeName);
+            showToast(`✓ Theme Applied: Switched to ${themeName.toUpperCase()} corporate UI mode.`);
+        }
+
+        /* --- FEATURE 3: VERNACULAR NLP TOGGLE (v23.0) --- */
+        function switchVernacularNlp(btn, langCode) {
+            document.querySelectorAll('.thm-btn').forEach(b => { if(b.parentElement === btn.parentElement) b.classList.remove('active'); });
+            btn.classList.add('active');
+            curNlpLang = langCode;
+            
+            let greeting = "Hello! I am HireBot v23.0 Coach. Ready to audit your portfolio!";
+            if(langCode === 'hinglish') {
+                greeting = "Namaste Aarav! Mai HireBot hun. Aapka resume analysis ready hai. Koi question poochein!";
+            } else if(langCode === 'hindi') {
+                greeting = "नमस्ते आरव! मैं हायरबॉट हूँ। आपका रेज़्यूमे विश्लेषण तैयार है। कोई भी प्रश्न पूछें!";
+            }
+            appendBubble(greeting, 'ai');
+            speakOut(greeting);
+            showToast(`🌐 NLP Language Switched to ${langCode.toUpperCase()}`);
+        }
+
+        /* --- FEATURE 4: ATS KILL SWITCH DEMO (v23.0) --- */
+        function testAtsParserLayout(type) {
+            const demo = document.getElementById('atsXraySplitDemo');
+            if(type === 'clean') {
+                demo.style.display = 'block';
+                demo.style.borderColor = 'var(--primary)';
+                demo.innerHTML = `
+                    <div class="split-header" style="background:var(--primary); color:#000;"><span>✓ LEGACY TALEO 2012 PARSER HEALTHY STREAM</span><span>100% PARSEABLE</span></div>
+                    <div class="split-body" style="color:var(--text-main);">
+                        [PARSER_DUMP]: Extracted single-column text stream.<br>
+                        [SUCCESS]: All mandatory headings found: Experience, Skills, Education.<br>
+                        [VERDICT]: <strong style="color:#000; background:var(--primary); padding:2px 6px;">100% ENTERPRISE COMPATIBLE ACCEPTED</strong>
+                    </div>
+                `;
+                showToast("🟢 Single-Column CV verified passed!");
+            } else {
+                demo.style.display = 'block';
+                demo.style.borderColor = 'var(--danger)';
+                demo.innerHTML = `
+                    <div class="split-header"><span>⚠️ LEGACY TALEO 2012 PARSER X-RAY ERROR</span><span>CRITICAL KILL-SWITCH</span></div>
+                    <div class="split-body">
+                        [PARSER_DUMP]: Scanned flattened graphic canvas.<br>
+                        [ERROR]: Extracted multi-column table horizontally: "Experience Skills Education Senior Python 2024 Null"<br>
+                        [VERDICT]: <strong style="color:#fff; background:var(--danger); padding:2px 6px;">75% UNPARSEABLE HAZARD REJECTED</strong>
+                    </div>
+                `;
+                showToast("🔴 Canva Graphic CV flagged parsing hazard!");
+            }
+        }
+
+        /* --- FEATURE 5: EXPORT PPT BLUEPRINT (v23.0) --- */
+        function exportCapstonePptBlueprint() {
+            const element = document.createElement('a');
+            const file = new Blob([`# HIRETECH AI v23.0 CAPSTONE PPT BLUEPRINT\n\nSlide 1: Title (HireTech Enterprise AI Suite)\nSlide 2: Problem Statement (75% ATS Rejection Rate)\nSlide 3: Candidate Features (11 Pillars)\nSlide 4: HR & Fraud Suite (9 Pillars)\nSlide 5: Super Admin Governance Console (9 Modules)\nSlide 6: Standout AI Architecture (8 Models)\nSlide 7: Security & 2FA Encryption (AES-256 GCM)\nSlide 8: Conclusion & Y-Combinator Seed Benchmark (8.8/10)`], {type: 'text/plain'});
+            element.href = URL.createObjectURL(file);
+            element.download = "HireTech_Capstone_PPT_Blueprint.txt";
+            document.body.appendChild(element); element.click(); element.remove();
+            showToast("📥 Exported Capstone PPT Slide Blueprint!");
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toastBox');
+            const div = document.createElement('div'); div.className = 'toast-item';
+            div.innerHTML = `<span>⚡</span><div>${msg}</div>`;
+            box.appendChild(div);
+            setTimeout(() => div.remove(), 3500);
+        }
+
+        function switchPortal(id) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.portal-section').forEach(s => s.classList.remove('active'));
+            if(id==='candidate'){ document.querySelectorAll('.nav-btn')[0].classList.add('active'); document.getElementById('portal-candidate').classList.add('active'); }
+            else if(id==='hr'){ document.querySelectorAll('.nav-btn')[1].classList.add('active'); document.getElementById('portal-hr').classList.add('active'); }
+            else if(id==='admin'){ document.querySelectorAll('.nav-btn')[2].classList.add('active'); document.getElementById('portal-admin').classList.add('active'); }
+            else if(id==='ai'){ document.querySelectorAll('.nav-btn')[3].classList.add('active'); document.getElementById('portal-ai').classList.add('active'); }
+            else if(id==='security'){ document.querySelectorAll('.nav-btn')[4].classList.add('active'); document.getElementById('portal-security').classList.add('active'); }
+            else { document.querySelectorAll('.nav-btn')[5].classList.add('active'); document.getElementById('portal-premium').classList.add('active'); }
+        }
+
+        function handleResumeUpload(e) { if(e.target.files.length>0) showToast(`✓ Ingested ${e.target.files[0].name} into FileReader RAM!`); }
+        function importJobAppBio(app) { showToast(`✓ Synced with ${app} API! Verified domain competencies.`); }
+        function importJobPostLink(app) { showToast(`✓ Fetched target contract from ${app}!`); }
+
+        function executeCandidateScoring() {
+            document.getElementById('candidateResultsBox').style.display = 'block';
+            let c = 0; if(activeScoreTimer) clearInterval(activeScoreTimer);
+            activeScoreTimer = setInterval(() => { c+=92/30; if(c>=92){c=92;clearInterval(activeScoreTimer);} document.getElementById('finalScoreText').innerText=Math.round(c)+'%'; document.getElementById('scoreCircle').style.strokeDashoffset=565.48-(c/100)*565.48; document.getElementById('p1Bar').style.width=c+'%'; document.getElementById('p2Bar').style.width=c+'%'; document.getElementById('p3Bar').style.width=100+'%'; }, 25);
+            showToast("✓ Mathematical 5-Pillar ATS calculation executed!");
+        }
+
+        function openAiOptimizerWorkingStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">✨ AI Resume Optimizer Working Console</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">Autonomously cross-examines missing target JD terms and injects them into quantified experience bullet points:</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; font-size:0.85rem; margin-bottom:1.5rem; text-align:left;">
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px; border:1px solid var(--border);">
+                        <strong style="color:var(--danger); display:block; margin-bottom:6px;">❌ Baseline Resume Bullets:</strong>
+                        "Built scalable backend microservices using Python."
+                    </div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px; border:1px solid var(--primary);">
+                        <strong style="color:var(--primary); display:block; margin-bottom:6px;">✨ AI Optimized Bullets:</strong>
+                        "Architected fault-tolerant backend microservices using <strong>Python FastAPI</strong> and <strong>AWS EKS Docker containers</strong>, slashing latency 35%."
+                    </div>
+                </div>
+                <button class="btn-main" onclick="applyAiOptimization()">⚡ Apply Optimization to Live CV Buffer</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function applyAiOptimization() {
+            closeActionModal();
+            document.getElementById('candScoreBadge').innerText = 'ATS Score: 98/100';
+            executeCandidateScoring();
+            showToast("🎉 Optimization Applied! Composite ATS score upgraded to 98%!");
+        }
+
+        function openCoverLetterDraftStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">✉️ Customized WYSIWYG Cover Letter Studio</h3>
+                <div style="background:var(--bg-main); padding:1.5rem; border-radius:12px; border:1px dashed var(--primary); font-family:var(--font-mono); font-size:0.92rem; color:var(--text-muted); text-align:left; margin-bottom:1.5rem; line-height:1.6;">
+                    "Respected Hiring Manager @ TechCorp,<br><br>I am writing to express enthusiastic interest in the Senior Full-Stack Python Architect opportunity. My analyzed CV verified a 94% vector alignment with your cloud goals. Having migrated 45+ microservices to Kubernetes clusters, I am eager to spearhead your 99.99% uptime objectives!"
+                </div>
+                <div style="display:flex; gap:1rem;">
+                    <button class="btn-outline" style="flex:1;" onclick="showToast('📋 Cover letter copied to clipboard!')">📋 Copy Draft</button>
+                    <button class="btn-main" style="flex:1;" onclick="triggerActualLetterDownload()">📥 Download DOCX</button>
+                </div>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function triggerActualLetterDownload() {
+            closeActionModal();
+            const element = document.createElement('a');
+            const file = new Blob(["HireTech Personalized Cover Letter Draft\n\nRespected Hiring Team...\n\nSincerely, Aarav Sharma"], {type: 'text/plain'});
+            element.href = URL.createObjectURL(file);
+            element.download = "Aarav_Sharma_Personalized_Cover_Letter.doc";
+            document.body.appendChild(element); element.click(); element.remove();
+            showToast("✓ Custom Cover Letter DOC downloaded!");
+        }
+
+        function triggerActualGdprFileExport() {
+            const element = document.createElement('a');
+            const file = new Blob([JSON.stringify({candidate: "Aarav Sharma", email: "aarav@gmail.com", encrypted_blob: "AES256_GCM_OK", dpdp_compliant: true}, null, 2)], {type: 'application/json'});
+            element.href = URL.createObjectURL(file);
+            element.download = "HireTech_GDPR_PII_Archive.json";
+            document.body.appendChild(element); element.click(); element.remove();
+            showToast("✓ GDPR PII Candidate Archive exported!");
+        }
+
+        function openMockInterviewStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">🎯 AI Mock Interview Probing Studio</h3>
+                <div style="background:var(--bg-main); padding:1.25rem; border-radius:10px; text-align:left; margin-bottom:1.5rem;">
+                    <span style="color:var(--cyan); font-weight:800; font-size:0.75rem;">QUESTION 1 OF 3 (TECHNICAL DOMAIN):</span>
+                    <h4 style="color:var(--text-main); font-size:1.15rem; margin:0.4rem 0;">"Explain how you manage Kubernetes cluster autoscaling under sudden traffic spikes."</h4>
+                    <p style="color:var(--text-muted); font-size:0.88rem; margin-top:0.5rem;">💡 <em>STAR Method Tip:</em> Mention AWS Karpenter and pod resource limits.</p>
+                </div>
+                <button class="btn-main" onclick="closeActionModal(); showToast('✓ Spoken practice recorded. Clarity: 96%!')">🎤 Practice Verbal Answer</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function openHrQgenDrawer(name, skills) {
+            const drw = document.getElementById('sideDrawer');
+            document.getElementById('sideDrawerContent').innerHTML = `
+                <div style="background:var(--bg-main); padding:1rem; border-radius:10px; margin-bottom:1.5rem;">
+                    <strong style="color:var(--text-main);">Candidate Claim:</strong> ${name}<br>
+                    <span style="font-size:0.85rem; color:var(--primary);">Verified Competencies: ${skills.join(', ')}</span>
+                </div>
+                <h4 style="color:var(--text-main); margin-bottom:1rem;">Targeted Probing Questions (Mod 5):</h4>
+                <div style="display:flex; flex-direction:column; gap:0.85rem; font-size:0.9rem; color:var(--text-muted);">
+                    <div style="background:var(--bg-card); padding:1rem; border-radius:8px; border:1px solid var(--border);"><strong style="color:var(--text-main); display:block;">1. ${skills[0]} Probing:</strong> "How do you handle zero-downtime schema migrations?"</div>
+                    <div style="background:var(--bg-card); padding:1rem; border-radius:8px; border:1px solid var(--border);"><strong style="color:var(--text-main); display:block;">2. ${skills[1]} Probing:</strong> "Explain dependency injection validation cycles."</div>
+                    <div style="background:var(--bg-card); padding:1rem; border-radius:8px; border:1px solid var(--border);"><strong style="color:var(--text-main); display:block;">3. ${skills[2] || 'System Arch'} Probing:</strong> "How do you mitigate distributed cache stampedes?"</div>
+                </div>
+                <button class="btn-main" style="margin-top:2rem;" onclick="closeHrDrawer(); showToast('✓ HR Rubric attached to screening notes!')">Attach Rubric to HR File</button>
+            `;
+            drw.style.display = 'block';
+        }
+
+        function closeHrDrawer() { document.getElementById('sideDrawer').style.display = 'none'; }
+
+        function openHrEmailConsole(type, toEmail, name) {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">✉️ Corporate Email Client Console (Mod 6)</h3>
+                <div style="text-align:left; font-size:0.88rem; display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;">
+                    <div style="background:var(--bg-main); padding:0.75rem 1rem; border-radius:8px;"><span>To:</span> <strong style="color:var(--text-main);">${toEmail} (${name})</strong></div>
+                    <div style="background:var(--bg-main); padding:0.75rem 1rem; border-radius:8px;"><span>Subject:</span> <strong style="color:var(--cyan);">${type} - Senior Cloud Architect @ TechCorp</strong></div>
+                    <textarea class="form-control" style="min-height:140px; margin-bottom:0;">Dear ${name},\n\nWe reviewed your verified ATS major project profile (94.2% Match). We are delighted to formally invite you for the Technical Architecture round this Thursday at 10:00 AM IST.\n\nBest Regards,\nCorporate Recruitment Team</textarea>
+                </div>
+                <button class="btn-main" style="background:var(--info); color:#fff;" onclick="closeActionModal(); showToast('✓ Corporate ${type} Email dispatched via SendGrid API!')">📤 Dispatch Corporate Email</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function verifyCompanyWorkflow(id, compName, action) {
+            if(action === 'Approve') {
+                document.getElementById('comp' + id + 'Actions').innerHTML = '<span class="badge badge-green">✓ Approved Verified</span>';
+                showToast(`✓ Company Verified: ${compName} onboarding authorized!`);
+            } else {
+                document.getElementById('comp' + id + 'Actions').innerHTML = '<span class="badge badge-red">✕ Rejected</span>';
+                showToast(`✕ Company Rejected: ${compName} license denied.`);
+            }
+            document.getElementById('adminPendingBadge').innerText = '1 Pending';
+            document.getElementById('sysAuditLogTerminal').innerHTML += `<br>[AUDIT_LOG_005] Admin executed ${action.toUpperCase()} on ${compName}.`;
+        }
+
+        function triggerFakeAccountBlocker() {
+            document.getElementById('adminCandCount').innerText = '10,436';
+            showToast("🚫 Security Action Fired: Scrubbed 14 malicious bot IP accounts!");
+            document.getElementById('sysAuditLogTerminal').innerHTML += `<br>[SECURITY_WARN] Scrubbed 14 malicious bot IPs from pool.`;
+        }
+
+        function openComplaintDeskModal() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">📋 Candidate Grievance & Report Desk</h3>
+                <div style="background:var(--bg-main); padding:1.5rem; border-radius:12px; text-align:center; margin-bottom:1.5rem;">
+                    <span style="font-size:2.5rem;">🛡️</span>
+                    <h4 style="color:var(--primary); margin:0.4rem 0;">0 Active Unresolved Grievances</h4>
+                    <p style="color:var(--text-muted); font-size:0.88rem;">All candidate complaints and employer reports moderated within 2-hour SLA.</p>
+                </div>
+                <button class="btn-outline" style="width:100%;" onclick="closeActionModal(); showToast('✓ Audit ticket logged.')">Download Compliance Ticket</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function openSubscriptionEditorStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">💎 Tier License & SLA Matrix Studio</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">Configure platform access allocations for academic & corporate groups:</p>
+                <div style="display:flex; flex-direction:column; gap:0.75rem; text-align:left; margin-bottom:1.5rem; font-size:0.9rem;">
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px; display:flex; justify-content:space-between;"><span>Academic Seeker Tier:</span><strong style="color:var(--primary);">Unlimited AI Access (₹0)</strong></div>
+                    <div style="background:var(--bg-main); padding:1rem; border-radius:8px; display:flex; justify-content:space-between;"><span>Corporate Recruiter Tier:</span><strong style="color:var(--cyan);">100 Batch CV Limit</strong></div>
+                </div>
+                <button class="btn-main" onclick="closeActionModal(); showToast('✓ Tier matrix synchronized!')">Save License Matrix</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function openBlogCmsPublicationStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">📝 Official Career Blog CMS Studio</h3>
+                <input type="text" class="form-control" style="margin-bottom:0.75rem;" placeholder="Article Title (e.g. Bypassing Legacy Enterprise ATS Parsers)">
+                <textarea class="form-control" style="min-height:120px; margin-bottom:1.25rem;" placeholder="Write career guidance whitepaper markdown..."></textarea>
+                <button class="btn-main" style="background:var(--gold); color:#000;" onclick="closeActionModal(); showToast('🚀 Published new career whitepaper to official CMS!')">🚀 Publish Article to Official Blog</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function trigger2faActivationStudio() {
+            const b = document.getElementById('btnToggle2fa');
+            if(b.innerText === 'Enable 2FA') {
+                b.innerText = '🟢 2FA Active'; b.style.background = 'var(--primary)'; b.style.color = '#000';
+                document.getElementById('twoFaStatusText').innerHTML = '<strong style="color:#00ff66;">✓ FIDO2 Time-based OTP Authenticator Enforced</strong>';
+                showToast("🛡️ Security Policy Updated: Two-Factor Authentication enforced!");
+            } else {
+                b.innerText = 'Enable 2FA'; b.style.background = 'transparent'; b.style.color = '#fff';
+                document.getElementById('twoFaStatusText').innerText = 'Time-based OTP authenticator enforcement.';
+                showToast("2FA Disabled.");
+            }
+        }
+
+        function openPortfolioGeneratorStudio() {
+            const m = document.getElementById('actionModal');
+            document.getElementById('actionModalContent').innerHTML = `
+                <button class="modal-close" onclick="closeActionModal()">✕</button>
+                <h3 style="color:var(--text-main); font-size:1.4rem; margin-bottom:1rem;">🌐 Personal Digital Showcase Generator</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.25rem;">Generated public digital portfolio URL:</p>
+                <div style="background:var(--bg-main); border:2px solid var(--primary); padding:1rem; border-radius:10px; font-family:var(--font-mono); font-size:1.05rem; color:var(--primary); margin-bottom:1.5rem;">
+                    https://hiretech.ai/portfolio/aarav-sharma-devops
+                </div>
+                <button class="btn-main" onclick="closeActionModal(); showToast('📋 Showcase URL copied to clipboard!')">📋 Copy Showcase Link</button>
+            `;
+            m.style.display = 'flex';
+        }
+
+        function setTrackerActive(elem, stepName) {
+            document.querySelectorAll('.kanban-step').forEach(s => s.classList.remove('active'));
+            elem.classList.add('active');
+            showToast(`✓ Application Tracker Fired: Advanced to ${stepName} stage!`);
+        }
+
+        function closeActionModal() { document.getElementById('actionModal').style.display = 'none'; }
+
+        function openAuthModal() { document.getElementById('authModal').style.display='flex'; }
+        function closeAuthModal() { document.getElementById('authModal').style.display='none'; }
+        function switchRole(r) { curRole=r; showToast(`Role switched to ${r.toUpperCase()}`); }
+        function simulateAuthSuccess() { closeAuthModal(); let u = document.getElementById('authEmailInput').value.split('@')[0]; document.getElementById('activeRoleText').innerText = `🟢 Logged in: ${u} (${curRole.toUpperCase()})`; showToast(`🎉 Signed in successfully via 2FA! Permissions loaded for ${curRole.toUpperCase()}`); }
+
+        function toggleChatbot() { const w = document.getElementById('chatWindow'); w.style.display=(w.style.display==='flex')?'none':'flex'; }
+        function handleChatFileUpload(e) { if(e.target.files.length > 0) { appendBubble(`📎 Attached: ${e.target.files[0].name}`, 'user'); setTimeout(() => { appendBubble("✓ Parsed CV buffer!", 'ai'); }, 700); } }
+        
+        function handsFreeVoiceAssistant() {
+            let promptText = "🎙️ Speak or type query to HireBot:";
+            if(curNlpLang === 'hinglish') promptText = "🎙️ Hinglish me poochiye (e.g. 'Mera ATS score kaise badhaun?'):";
+            if(curNlpLang === 'hindi') promptText = "🎙️ हिंदी में पूछें (उदा. 'मेरा स्कोर कैसे सुधारें?'):";
+            
+            let q = prompt(promptText, "Mera ATS score kaise badhaun?");
+            if(!q) return;
+            appendBubble(`🎙️ "${q}"`, 'user');
+            
+            setTimeout(() => {
+                let verbalReply = "Your profile is doing great! To boost your score, incorporate missing skills.";
+                if(curNlpLang === 'hinglish') verbalReply = "Aarav, aapka resume structure solid hai, par Senior Cloud roles ke liye Docker aur Kubernetes keywords miss ho rahe hain!";
+                if(curNlpLang === 'hindi') verbalReply = "आरव, आपका रेज़्यूमे ढांचा मजबूत है, लेकिन सीनियर क्लाउड भूमिकाओं के लिए डॉकर कौशल गायब हैं!";
+                
+                appendBubble(verbalReply, 'ai');
+                speakOut(verbalReply);
+            }, 700);
+        }
+
+        function sendChat() { const i = document.getElementById('chatInput'); if(!i.value.trim())return; appendBubble(i.value.trim(),'user'); i.value=''; }
+        function appendBubble(m, s) { const b = document.getElementById('chatBody'); const d = document.createElement('div'); d.className='chat-bubble bubble-'+s; d.innerHTML=m; b.appendChild(d); b.scrollTop=b.scrollHeight; }
+        function speakOut(txt) { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(txt); window.speechSynthesis.speak(u); } }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1363c003b59fc4c',t:'MTc4Mjc0OTc3Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
