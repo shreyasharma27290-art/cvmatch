@@ -242,7 +242,28 @@ This project is designed to be built incrementally. If you're a B.Tech IT studen
 6. **Week 11-12:** Add payments (Razorpay) and launch!
 
 ---
+## Current Status
 
+CVMatch is currently an MVP/full-stack prototype.
+
+### Working
+- Responsive frontend pages
+- FastAPI backend structure
+- Resume parser utility
+- ATS scoring logic
+- Job matching API with demo dataset
+- Dashboard and AI career assistant UI
+
+### In Progress
+- Connecting frontend analyzer with backend API
+- Real PDF/DOCX parsing in live deployment
+- Backend-based AI chatbot integration
+- Database persistence
+- Production deployment of FastAPI backend
+
+  ---
+### Demo Data Notice
+Some job listings, pricing, user statistics, and AI responses are sample/demo data used for project demonstration.
 ## 📄 License
 
 MIT License — free to use, modify, and build on.
