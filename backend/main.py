@@ -3,7 +3,7 @@ CVMatch Backend – FastAPI Application
 Full-stack AI Resume Analysis & Job Matching Platform
 """
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, HTTPException, BackgroundTasks, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -425,7 +425,7 @@ def login(email: str, password: str):
 # ── RESUME ANALYSIS ───────────────────────────
 
 @app.post("/api/resume/analyze")
-async def analyze_resume(file: UploadFile = File(...)):
+async def analyze_resume(file: UploadFile = File(...), job_description: str = Form("")):
     """Upload and analyze a real resume file (PDF/DOCX/TXT)."""
     if parse_resume is None:
         raise HTTPException(
@@ -465,7 +465,7 @@ async def analyze_resume(file: UploadFile = File(...)):
         resume_text = resume_text or ""
 
     # Run ATS scoring on the actual extracted resume text
-    score_data = calculate_ats_score(resume_text)
+    score_data = calculate_ats_score(resume_text, job_description)
     sw = get_resume_strengths_weaknesses(resume_text, score_data)
     improvements = generate_improvements(score_data, resume_text)
 
@@ -487,6 +487,9 @@ async def analyze_resume(file: UploadFile = File(...)):
         },
         "detected_skills": detected_skills,
         "skills_by_category": parsed_resume.get("skills", {}),
+        "jd_match_score": score_data.get("jd_match_score", 0),
+        "matched_skills": score_data.get("matched_skills", []),
+        "missing_skills": score_data.get("missing_skills", []),
         "strengths": sw["strengths"],
         "weaknesses": sw["weaknesses"],
         "improvements": improvements,
