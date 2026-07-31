@@ -244,22 +244,27 @@ This project is designed to be built incrementally. If you're a B.Tech IT studen
 ---
 ## Current Status
 
-CVMatch is currently an MVP/full-stack prototype.
+CVMatch is currently a working full-stack MVP.
 
 ### Working
-- Responsive frontend pages
-- FastAPI backend structure
-- Resume parser utility
-- ATS scoring logic
-- Job matching API with demo dataset
-- Dashboard and AI career assistant UI
+- Responsive frontend pages deployed on Vercel
+- FastAPI backend deployed on Render
+- Real PDF/DOCX/TXT resume upload and parsing
+- ATS scoring based on extracted resume text
+- Job description match score
+- Matched and missing skills detection
+- Resume strengths, weaknesses, and improvement suggestions
+- Dashboard, jobs, and AI career assistant UI
 
 ### In Progress
-- Connecting frontend analyzer with backend API
-- Real PDF/DOCX parsing in live deployment
+- Improving ATS scoring accuracy
+- Adding database persistence for scan history
 - Backend-based AI chatbot integration
-- Database persistence
-- Production deployment of FastAPI backend
+- Better job matching algorithm
+- User authentication and saved reports
+
+### Demo Data Notice
+Some job listings, pricing, testimonials, and chatbot responses are sample/demo data used for project demonstration.
 
   ---
 ### Demo Data Notice
