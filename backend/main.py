@@ -14,6 +14,15 @@ import random
 import hashlib
 from datetime import datetime
 
+# Resume parser utility
+try:
+    from utils.resume_parser import parse_resume
+except ImportError:
+    try:
+        from backend.utils.resume_parser import parse_resume
+    except ImportError:
+        parse_resume = None
+
 app = FastAPI(
     title="CVMatch API",
     description="AI-powered resume analysis and job matching platform",
@@ -417,74 +426,84 @@ def login(email: str, password: str):
 
 @app.post("/api/resume/analyze")
 async def analyze_resume(file: UploadFile = File(...)):
-    """Upload and analyze a resume file (PDF/DOCX)."""
-    if file.content_type not in ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"]:
-        raise HTTPException(status_code=400, detail="Only PDF, DOCX, or TXT files are supported")
+    """Upload and analyze a real resume file (PDF/DOCX/TXT)."""
+    if parse_resume is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Resume parser utility is not available. Check backend/utils/resume_parser.py"
+        )
+
+    filename = file.filename or "resume"
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+
+    allowed_extensions = {"pdf", "docx", "txt"}
+    if extension not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail="Only PDF, DOCX, or TXT resume files are supported"
+        )
 
     content = await file.read()
+    if not content:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty")
 
-    # For demo: simulate text extraction
-    # In production: use pdfplumber for PDF, python-docx for DOCX
-    sample_resume_text = """
-    Priya Sharma
-    priya.sharma@email.com | +91 9876543210 | linkedin.com/in/priya | github.com/priya-sharma
+    try:
+        parsed_resume = parse_resume(content, extension)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Could not parse resume: {str(exc)}"
+        )
 
-    EDUCATION
-    B.Tech in Information Technology | Lovely Professional University | 2021-2025 | CGPA: 8.2
+    resume_text = (parsed_resume.get("raw_text") or "").strip()
+    extraction_warning = None
 
-    SKILLS
-    Languages: Python, JavaScript, Java, SQL
-    Frameworks: React.js, FastAPI, TensorFlow, Pandas, NumPy
-    Tools: Git, Docker, AWS, Postman, Jupyter Notebook
-    Databases: PostgreSQL, MongoDB
+    if not resume_text or resume_text.startswith("[Could not extract text"):
+        extraction_warning = (
+            "Text could not be extracted properly. Please upload a text-based PDF, DOCX, or TXT resume."
+        )
+        resume_text = resume_text or ""
 
-    EXPERIENCE
-    Data Science Intern | ABC Analytics | June 2024 - August 2024
-    - Built ML models using Python and Scikit-learn, improving forecast accuracy by 18%
-    - Analyzed 100K+ customer records using Pandas and SQL to identify churn patterns
-    - Created interactive dashboards using Matplotlib and Streamlit
+    # Run ATS scoring on the actual extracted resume text
+    score_data = calculate_ats_score(resume_text)
+    sw = get_resume_strengths_weaknesses(resume_text, score_data)
+    improvements = generate_improvements(score_data, resume_text)
 
-    PROJECTS
-    AI Recommendation Engine
-    - Developed a collaborative filtering system using TensorFlow serving 50K+ users
-    - Deployed on AWS with 99.9% uptime, reduced recommendation latency by 40%
-
-    Student Attendance System
-    - Built full-stack app using React.js + FastAPI + PostgreSQL
-    - Automated attendance tracking for 2000+ students, reducing manual work by 80%
-
-    CERTIFICATIONS
-    - Python for Data Science – Coursera (2024)
-    - AWS Cloud Practitioner – AWS (2024)
-    """
-
-    score_data = calculate_ats_score(sample_resume_text)
-    sw = get_resume_strengths_weaknesses(sample_resume_text, score_data)
-    improvements = generate_improvements(score_data, sample_resume_text)
-    contact = extract_contact_info(sample_resume_text)
+    contact = parsed_resume.get("contact") or extract_contact_info(resume_text)
+    detected_skills = parsed_resume.get("all_skills") or score_data.get("detected_skills", [])
+    sections_found = parsed_resume.get("sections_found") or score_data.get("sections_found", {})
 
     result = {
         "success": True,
-        "file_name": file.filename,
+        "file_name": filename,
+        "file_type": extension,
         "contact_info": contact,
         "ats_score": score_data["total_score"],
         "sub_scores": {
             "keywords": score_data["sub_scores"]["keywords"],
-            "skills": score_data["sub_scores"]["sections"],
+            "skills": score_data["sub_scores"].get("skills", score_data["sub_scores"].get("sections", 0)),
             "formatting": score_data["sub_scores"]["formatting"],
             "experience": score_data["sub_scores"]["experience"],
         },
-        "detected_skills": score_data["detected_skills"],
+        "detected_skills": detected_skills,
+        "skills_by_category": parsed_resume.get("skills", {}),
         "strengths": sw["strengths"],
         "weaknesses": sw["weaknesses"],
         "improvements": improvements,
-        "sections_found": score_data["sections_found"],
-        "resume_text_preview": sample_resume_text[:300] + "...",
+        "sections_found": sections_found,
+        "parser_stats": {
+            "word_count": parsed_resume.get("word_count", len(resume_text.split())),
+            "page_estimate": parsed_resume.get("page_estimate", 1),
+            "experience_years": parsed_resume.get("experience_years", 0),
+            "projects_found": len(parsed_resume.get("projects", [])),
+        },
+        "extraction_warning": extraction_warning,
+        "resume_text_preview": resume_text[:500] + ("..." if len(resume_text) > 500 else ""),
         "analyzed_at": datetime.utcnow().isoformat(),
     }
 
-    # Store in memory
-    analysis_id = hashlib.md5(file.filename.encode()).hexdigest()[:8]
+    # Store in memory for demo/session history
+    analysis_id = hashlib.md5((filename + str(datetime.utcnow())).encode()).hexdigest()[:8]
     ANALYSES_DB[analysis_id] = result
 
     return {**result, "analysis_id": analysis_id}
